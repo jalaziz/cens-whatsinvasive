@@ -29,6 +29,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.util.Log;
 import edu.ucla.cens.whatsinvasive.R;
 import edu.ucla.cens.whatsinvasive.WhatsInvasive;
@@ -59,7 +60,6 @@ public class UploadService extends Service {
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -69,7 +69,6 @@ public class UploadService extends Service {
 		
 		Log.i(TAG,"Stopping UploadService");
 		
-		// TODO Auto-generated method stub
 		super.onDestroy();
 	}
 
@@ -81,14 +80,15 @@ public class UploadService extends Service {
 		public void run() {
 
 			try {
-				while (runThread) {
+				while (runThread) {;
 					Thread.sleep(UPLOAD_INTERVAL);
 					Log.d(TAG, "Running the thread");
+					
+                    boolean uploadSuccess = false;
 
 					// list all trace files
 					pdb.open();
 					ArrayList<PhotoDatabaseRow> photoentries = pdb.fetchPendingPhotos(0);
-					pdb.close();
 
 					Log.d(TAG, "Unuploaded Points: "+ Integer.toString(photoentries.size()));
 					
@@ -97,7 +97,6 @@ public class UploadService extends Service {
 						stopSelf();
 					
 					// points we will actually submit using the default timeout
-					pdb.open();
 					ArrayList<PhotoDatabaseRow> toDelete = pdb.fetchUploadedPhotos(20);
 					for(PhotoDatabaseRow row : toDelete){
 						pdb.deletePhoto(row.rowValue);
@@ -109,13 +108,11 @@ public class UploadService extends Service {
 					
 					Log.d(TAG, "Points to submit: "+ Integer.toString(photoentries.size()));
 					
-					int i;
-					
 					SharedPreferences preferences = UploadService.this.getSharedPreferences(WhatsInvasive.PREFERENCES_USER, Activity.MODE_PRIVATE);
 			        String username = preferences.getString("username", null);
 			        String password = preferences.getString("password", null);
-										
-					for (i = 0; i < photoentries.size(); i++) {
+			        
+					for (int i = 0; i < photoentries.size(); i++) {
 						PhotoDatabaseRow photoentry = photoentries.get(i);
 						
 						File file = null;
@@ -128,60 +125,24 @@ public class UploadService extends Service {
 							if(file != null && file.exists())
 								url = IMAGE_UPLOAD_URL;
 							
-							String deviceId = android.provider.Settings.System.getString(UploadService.this.getContentResolver(), android.provider.Settings.System.ANDROID_ID);
+							String deviceId = Settings.System.getString(UploadService.this.getContentResolver(), Settings.System.ANDROID_ID);
 							
-							if(deviceId==null) deviceId = "356996016219759";
+							if(deviceId == null) deviceId = "356996016219759";
 							
 							URI uri = createUri(url, deviceId, photoentry.tagsValue, photoentry.noteValue, photoentry.timeValue, photoentry.latValue, photoentry.lonValue, photoentry.areaValue, photoentry.amountValue, username, password);
 							
 							Log.d(TAG,"amount = "+ photoentry.amountValue);
 							
 							if (doPost(uri, photoentry.filenameValue)) {
-								if(file != null && file.exists()) {
+								if (file != null && file.exists()) {
 									file.delete();
-								/*	Commented out on 12/3/09 by Keith instead of reducing file, we're just deleting it
-								 *  Probably originally kept photos so that when looking through queue you could see a thumb
-								 *  of previously sent observations. Since we empty the queue after sending photos now we don't
-								 *  need to keep the thumbs.
-								 * 	
-								 * 
-								    // Reduce file size and overlay
-								    Options options = new Options();
-									options.inJustDecodeBounds = true;
-						        	BitmapFactory.decodeFile(photoentry.filenameValue, options);
-						        	
-									int width = options.outWidth;
-						            int height = options.outHeight;
-									
-						            options = new Options();
-									options.inDither = false;
-						            
-						            Boolean scaleByHeight = Math.abs(height - 480) >= Math.abs(width - 640);
-						        	double sampleSize = scaleByHeight ? height / 480 : width / 640;
-						        	options.inSampleSize = (int) Math.pow(2d, Math.floor(Math.log(sampleSize) / Math.log(2d)));
-						        	
-						        	Bitmap thumb = BitmapFactory.decodeFile(photoentry.filenameValue, options);
-						        	
-						        	*	commented out prior to 12/3/09 by someone else
-						        	* 
-						        	Bitmap preview = Bitmap.createBitmap(thumb.getWidth(), thumb.getHeight(), Bitmap.Config.ARGB_8888);				        	
-						        	
-						        	Bitmap overlay = BitmapFactory.decodeResource(UploadService.this.getResources(), R.drawable.btn_check_buttonless_on);
-						        	
-						        	Canvas canvas = new Canvas(preview);
-						        	canvas.drawBitmap(thumb, 0, 0, null);
-						        	canvas.drawBitmap(overlay, (thumb.getWidth()/2)-14, 10, null);
-						        	*   end existing comment from pre 12/3/09 comment
-						        	*
-						        	FileOutputStream os = new FileOutputStream(photoentry.filenameValue);
-						        	thumb.compress(CompressFormat.JPEG, 90, os);
-						        */
 								}
 								
 								pdb.open();
 								pdb.updatePhotoUploaded(photoentry.rowValue);
-								//pdb.deletePhoto(photoentry.rowValue);
 								pdb.close();
+								
+								uploadSuccess = true;
 							}
 						} catch (IOException e) {
 							Log.d(TAG, "threw an IOException for sending file.");
@@ -189,20 +150,15 @@ public class UploadService extends Service {
 						}
 					}
 					
-					if(i > 1){
+					if (uploadSuccess) {
 						NotificationManager manager = (NotificationManager) UploadService.this.getSystemService(NOTIFICATION_SERVICE);
-						
 						Notification notification = new Notification(android.R.drawable.stat_sys_upload_done, getString(R.string.upload_service_done1), System.currentTimeMillis());
-						
 						PendingIntent intent = PendingIntent.getActivity(UploadService.this, 0, new Intent(UploadService.this, WhatsInvasive.class), 0); 
-
 						notification.setLatestEventInfo(UploadService.this, getString(R.string.upload_service_done2), getString(R.string.upload_service_done3), intent); 
-						
 						manager.notify(R.string.upload_notification, notification);
 					}
 				}
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -216,7 +172,7 @@ public class UploadService extends Service {
 			qparams.add(new BasicNameValuePair("deviceid", deviceid));
 			qparams.add(new BasicNameValuePair("tag", tags));
 			qparams.add(new BasicNameValuePair("notes", notes));
-			qparams.add(new BasicNameValuePair("datetime", phototime +" UTC"));
+			qparams.add(new BasicNameValuePair("datetime", phototime +" UTC")); //TODO: Remove UTC for ISO 8601
 			qparams.add(new BasicNameValuePair("latitude", photolat));
 			qparams.add(new BasicNameValuePair("longitude", photolon));
 			qparams.add(new BasicNameValuePair("area_id", Long.toString(area)));
@@ -244,7 +200,7 @@ public class UploadService extends Service {
 			HttpClient httpClient = new CustomHttpClient();
 			HttpPost request = new HttpPost(uri);
 			
-			if(filename!=null){
+			if(filename != null){
 				FileInputStream fis = new FileInputStream(filename);
 				
 				InputStreamEntity entity = new InputStreamEntity(fis, -1);
