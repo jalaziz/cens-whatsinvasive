@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/RelativeLayout01"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<RelativeLayout android:id="@+id/top_bar"
+		android:layout_width="fill_parent" 
+		android:background="@color/lighter_green"
+		android:orientation="vertical"
+		android:layout_height="wrap_content" android:paddingTop="10px" android:paddingBottom="5px">
+		
+		<RelativeLayout android:layout_height="wrap_content" android:layout_alignParentLeft="true" android:id="@+id/radio_buttons" android:layout_toRightOf="@+id/check_group" android:layout_width="wrap_content"><RadioGroup android:id="@+id/radio_group" android:layout_height="wrap_content" android:layout_marginRight="10dp" android:orientation="horizontal" android:layout_alignParentLeft="true" android:layout_marginTop="-6sp" android:layout_marginLeft="5sp" android:paddingRight="2dp" android:paddingLeft="2dp" android:layout_width="160dp">
+
+				<RadioButton android:id="@+id/one_radio_button" android:layout_width="wrap_content" android:layout_height="wrap_content" android:tag="one" android:checked="true" android:layout_marginRight="8dp"/>
+					
+				<RadioButton android:id="@+id/few_radio_button" android:layout_toRightOf="@+id/one_radio_button" android:layout_width="wrap_content" android:layout_height="wrap_content" android:tag="few" android:layout_marginLeft="8dp" android:layout_marginRight="8dp"/>
+					
+				<RadioButton android:id="@+id/many_radio_button" android:layout_width="wrap_content" android:layout_height="wrap_content" android:tag="many" android:layout_marginLeft="8dp"/>
+					
+		</RadioGroup><RelativeLayout android:id="@+id/RelativeLayout02" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_below="@+id/radio_group" android:layout_alignParentLeft="true" android:layout_marginTop="-12sp" android:paddingLeft="2dp" android:paddingRight="2dp"><TextView android:id="@+id/display_one" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/tag_one" android:textSize="@dimen/twozero_sp" android:width="50px" android:layout_marginRight="5sp" android:gravity="center" android:layout_marginLeft="-5sp" /><TextView android:id="@+id/display_few" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/tag_few" android:layout_toRightOf="@+id/display_one" android:textSize="@dimen/twozero_sp" android:width="50px" android:gravity="center" android:layout_marginRight="5sp"/><TextView android:id="@+id/display_many" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/tag_many" android:layout_toRightOf="@+id/display_few" android:textSize="@dimen/twozero_sp" android:width="50px" android:gravity="center" /></RelativeLayout></RelativeLayout>
+		
+		
+		
+		
+
+		
+		
+		
+
+		
+			
+		
+		
+		
+			
+		
+	
+	<RelativeLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/check_group" android:layout_alignParentRight="true" android:gravity="right" android:layout_marginTop="-6sp"><CheckBox android:id="@+id/with_photo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:width="50px" android:layout_marginLeft="10dp"/><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="@dimen/twozero_sp" android:id="@+id/display_photo" android:layout_below="@+id/with_photo" android:text="@string/photo" android:width="60px" android:gravity="center" android:layout_marginRight="5sp" android:layout_marginTop="-12sp"/><CheckBox android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/with_note" android:width="50px" android:layout_marginLeft="10dp" android:layout_toRightOf="@+id/with_photo"/><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="@dimen/twozero_sp" android:layout_marginTop="-12sp" android:id="@+id/display_note" android:layout_below="@+id/with_note" android:text="@string/note" android:gravity="center" android:width="50px" android:layout_toRightOf="@+id/display_photo"/></RelativeLayout>
+
+
+</RelativeLayout>
+
+	<ListView android:layout_below="@+id/top_bar" android:id="@+id/android:list" android:layout_width="wrap_content" android:layout_height="wrap_content"></ListView>
+</RelativeLayout>

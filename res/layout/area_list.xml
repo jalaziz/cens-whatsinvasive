@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/RelativeLayout01"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	<LinearLayout android:id="@+id/LinearLayout01"
+		android:layout_height="wrap_content" android:layout_width="fill_parent"
+		android:orientation="vertical">
+		<TextView android:id="@+id/TextViewTitle"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:text="@string/help_settings_select_park" android:padding="10px"
+			android:textColor="@color/white" android:textAppearance="?android:attr/textAppearanceLarge"></TextView>
+	</LinearLayout>
+	<ListView android:id="@+id/ListView01" android:layout_height="wrap_content"
+		android:layout_width="fill_parent" android:layout_below="@+id/LinearLayout01"></ListView>
+</RelativeLayout>

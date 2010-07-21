@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/RelativeLayout01"
+	android:orientation="horizontal"
+	android:background="@color/green" android:gravity="center_horizontal"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_gravity="center">
+	
+	<TextView android:text="@string/login_username" android:id="@+id/TextView01"
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content" android:layout_marginTop="33px"></TextView>
+	<EditText android:id="@+id/EditText01" android:layout_height="wrap_content"
+		android:layout_width="wrap_content" android:layout_toRightOf="@+id/TextView01"
+		android:minWidth="200px" android:maxWidth="200px" android:layout_marginLeft="8px" android:layout_marginTop="20px"></EditText>
+	<TextView android:text="@string/login_password" android:id="@+id/TextView02" android:layout_below="@+id/EditText01" android:layout_height="wrap_content"
+		android:layout_width="wrap_content" android:layout_marginTop="12px" android:layout_marginLeft="5px"></TextView>
+	<EditText android:id="@+id/EditText02"
+		android:layout_toRightOf="@+id/TextView01" android:layout_below="@+id/EditText01"
+		android:layout_height="wrap_content" android:layout_width="wrap_content" android:inputType="textPassword" 
+		android:minWidth="200px" android:layout_marginLeft="8px"></EditText>
+
+	<Button android:text="@string/login_login_button" android:id="@+id/ButtonLogin"
+		android:layout_below="@+id/EditText02" android:layout_toRightOf="@+id/TextView01"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:textSize="20px" android:layout_marginLeft="8px"></Button>
+	<Button android:text="@string/login_reset_button" android:id="@+id/ButtonReset"
+		android:layout_below="@+id/EditText02" android:layout_toRightOf="@+id/ButtonLogin"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:textSize="20px"></Button>
+	<Button android:text="@string/login_register_button" android:id="@+id/ButtonRegister"
+		android:layout_below="@+id/ButtonLogin" android:layout_toRightOf="@+id/TextView01"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:textSize="20px" android:layout_marginLeft="8px" android:layout_marginTop="10px"></Button><Button android:layout_toRightOf="@+id/TextView01"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:textSize="20px" android:text="@string/login_anon" android:layout_below="@+id/ButtonRegister" android:layout_marginTop="2px" android:width="190px" android:layout_marginLeft="8px" android:id="@+id/ButtonTest"></Button>
+
+<ImageView android:id="@+id/ImageView01" android:layout_width="wrap_content" android:src="@drawable/logo_land" android:layout_alignParentLeft="true" android:layout_marginRight="0px" android:layout_marginLeft="-120px" android:layout_centerVertical="true" android:layout_toRightOf="@+id/TextView01" android:layout_centerInParent="false" android:layout_centerHorizontal="false" android:layout_alignParentBottom="true" android:layout_height="wrap_content" android:layout_marginTop="5px"></ImageView>
+</RelativeLayout>
