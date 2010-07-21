@@ -1,6 +1,8 @@
 package edu.ucla.cens.whatsinvasive.data;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -49,16 +51,22 @@ public class PhotoDatabase {
 		+ ");";
 	
     public class PhotoDatabaseRow {
-    	public long rowValue;
-    	public long areaValue;
-    	public String lonValue;
-    	public String latValue;
-    	public String timeValue;
-    	public String filenameValue;            	
-    	public String tagsValue;
-    	public String uploadValue;
-    	public String amountValue;
-    	public String noteValue;
+        	public long rowValue;
+        	public long areaValue;
+        	public String lonValue;
+        	public String latValue;
+        	public String timeValue;
+        	public String filenameValue;            	
+        	public String tagsValue;
+        	public String uploadValue;
+        	public String amountValue;
+        	public String noteValue;
+    }
+    
+    private final CopyOnWriteArrayList<OnChangeListener> m_changeListeners = new CopyOnWriteArrayList<OnChangeListener>();
+    
+    public interface OnChangeListener {
+        public void onDatabseChanged(PhotoDatabase source);
     }
 	
 	private static class DatabaseHelper extends SQLiteOpenHelper
@@ -131,6 +139,8 @@ public class PhotoDatabase {
 		vals.put(KEY_PHOTO_NOTE, note);
 		
 		long rowid = db.insert(DATABASE_TABLE, null, vals);
+		
+		onChange();
 		return rowid;
 	}
 	
@@ -141,6 +151,7 @@ public class PhotoDatabase {
 		
 		if(count > 0)
 		{
+		    onChange();
 			return true;
 		}
 		else
@@ -272,6 +283,7 @@ public class PhotoDatabase {
 	
 	public void updatePhotoUploaded(long rowId) {
 		db.execSQL("UPDATE "+ DATABASE_TABLE +" SET "+ KEY_PHOTO_UPLOADED +"=datetime('now') WHERE "+ KEY_PHOTO_ROWID +"="+ rowId);
+		onChange();
 	}
 	
 	public boolean updatePhoto(long rowId, String lon, String lat, String time, String filename, String tags, Long area, String amount, String note) {
@@ -285,13 +297,41 @@ public class PhotoDatabase {
 		vals.put(KEY_PHOTO_AMOUNT, amount);
 		vals.put(KEY_PHOTO_NOTE, note);
 		
-		return db.update(DATABASE_TABLE, vals,KEY_PHOTO_ROWID+"="+rowId, null) > 0;
+		boolean result = db.update(DATABASE_TABLE, vals,KEY_PHOTO_ROWID+"="+rowId, null) > 0;
+		
+		if(result) {
+		    onChange();
+		}
+		
+		return result;
 	}
 	
 	public boolean updateNote(long rowId, String note) {
         ContentValues vals = new ContentValues();
         vals.put(KEY_PHOTO_NOTE, note);
         
-        return db.update(DATABASE_TABLE, vals,KEY_PHOTO_ROWID+"="+rowId, null) > 0;
+        boolean result = db.update(DATABASE_TABLE, vals,KEY_PHOTO_ROWID+"="+rowId, null) > 0;
+        
+        if(result) {
+            onChange();
+        }
+        
+        return result;
     }
+	
+	public void addChangeListener(OnChangeListener listener) {
+	    m_changeListeners.add(listener);
+	}
+	
+	public void removeChangeListener(OnChangeListener listener) {
+	    m_changeListeners.remove(listener);
+    }
+	
+	public void onChange() {
+	    Iterator<OnChangeListener> i = m_changeListeners.iterator();
+	    
+	    while(i.hasNext()) {
+	        i.next().onDatabseChanged(this);
+	    }
+	}
 }

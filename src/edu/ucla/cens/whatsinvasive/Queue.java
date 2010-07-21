@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.util.Linkify;
 import android.view.ContextMenu;
 import android.view.MenuItem;
@@ -27,6 +28,7 @@ import android.widget.Toast;
 import android.widget.TwoLineListItem;
 import android.widget.AdapterView.OnItemClickListener;
 import edu.ucla.cens.whatsinvasive.data.PhotoDatabase;
+import edu.ucla.cens.whatsinvasive.data.PhotoDatabase.OnChangeListener;
 import edu.ucla.cens.whatsinvasive.data.PhotoDatabase.PhotoDatabaseRow;
 import edu.ucla.cens.whatsinvasive.services.UploadService;
 import edu.ucla.cens.whatsinvasive.tools.Media;
@@ -70,6 +72,16 @@ public class Queue extends ListActivity {
         getListView().setFooterDividersEnabled(true);
         
         mDatabase = new PhotoDatabase(this);
+        mDatabase.addChangeListener(new OnChangeListener() {
+            public void onDatabseChanged(PhotoDatabase source) {
+                new Handler().post(new Runnable() {
+                    public void run() {
+                        if(Queue.this.mCursor != null)
+                            Queue.this.mCursor.requery();
+                    }
+                });
+            }
+        });
 		
 		getListView().setOnItemClickListener(new OnItemClickListener(){
 
@@ -182,8 +194,6 @@ public class Queue extends ListActivity {
 				
 				if(data.filename!=null)
 					(new File(data.filename)).delete();
-				
-				mCursor.requery();
 				
 				break;
 		}
