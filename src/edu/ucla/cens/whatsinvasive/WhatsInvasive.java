@@ -73,7 +73,7 @@ public class WhatsInvasive extends Activity implements Observer {
 	public static final int RESULT_LOCATION_MISSING = 2;
 
 	private static final String TAG = "WhatsInvasive";
-	private static final int MESSAGE_UPDATE_LOCATION = 54;
+	private static final int MESSAGE_UPDATE_LOCATION = 60;
 	private static final int MESSAGE_COMPLETE_TAG = 55;
 	private static final int MESSAGE_TIMEOUT_TAG = 56;
 	private static final int MESSAGE_NO_RESPONSE_TAG = 57;
@@ -120,6 +120,7 @@ public class WhatsInvasive extends Activity implements Observer {
                 switch(msg.what){
                 case MESSAGE_UPDATE_LOCATION:
                     showToast(getString(R.string.park_location_updated), Toast.LENGTH_SHORT);
+                    break;
                 case MESSAGE_COMPLETE_TAG:
                     showToast(getString(R.string.tag_list_download_complete), Toast.LENGTH_SHORT);
                     break;
