@@ -119,7 +119,10 @@ public class WhatsInvasive extends Activity implements Observer {
             } else {
                 switch(msg.what){
                 case MESSAGE_UPDATE_LOCATION:
-                    showToast(getString(R.string.park_location_updated), Toast.LENGTH_SHORT);
+                    updatePark();
+                    if(WhatsInvasive.this.hasWindowFocus()) {
+                        showToast(getString(R.string.park_location_updated), Toast.LENGTH_SHORT);
+                    }
                     break;
                 case MESSAGE_COMPLETE_TAG:
                     showToast(getString(R.string.tag_list_download_complete), Toast.LENGTH_SHORT);
@@ -342,26 +345,48 @@ public class WhatsInvasive extends Activity implements Observer {
 
 	@Override
 	protected void onResume() {
-
-		TagDatabase db = new TagDatabase(this);
-		db.openRead();
-		
-		long parkId = LocationService.getParkId(this);
-		int availablePlantTags = db.getTagsAvailable(parkId, TagType.WEED);
-		int availableAnimalTags = db.getTagsAvailable(parkId, TagType.BUG);
-
-		db.close();
-
-		Button captureWeed = (Button) this.findViewById(R.id.ButtonTagWeed);
-		Button captureBug = (Button)this.findViewById(R.id.ButtonTagBug);
- 
-		captureWeed.setEnabled(availablePlantTags != 0);
-		captureBug.setEnabled(availableAnimalTags != 0);
-
-		setParkTitle();
+	    updatePark();
 		setUserName();
 
 		super.onResume();
+	}
+	
+	protected void updatePark() {
+        TagDatabase db = new TagDatabase(this);
+        db.openRead();
+        
+        long parkId = LocationService.getParkId(this);
+        int availablePlantTags = db.getTagsAvailable(parkId, TagType.WEED);
+        int availableAnimalTags = db.getTagsAvailable(parkId, TagType.BUG);
+
+        db.close();
+
+        Button captureWeed = (Button) this.findViewById(R.id.ButtonTagWeed);
+        Button captureBug = (Button)this.findViewById(R.id.ButtonTagBug);
+ 
+        captureWeed.setEnabled(availablePlantTags != 0);
+        captureBug.setEnabled(availableAnimalTags != 0);
+
+        // Set park caption
+        TextView textView = (TextView) this.findViewById(R.id.TextView01); 
+        TextView textView2 = (TextView) this.findViewById(R.id.TextView02); 
+        LinearLayout titleLayout = (LinearLayout) this.findViewById(R.id.LinearLayout01);
+        titleLayout.setOnClickListener(titleClickListener);
+        SharedPreferences preferences = this.getSharedPreferences(WhatsInvasive.PREFERENCES_USER, Activity.MODE_PRIVATE);
+        String title,title2;
+        if(preferences.getBoolean("locationServiceOn", true)){
+            title2 = getString(R.string.location_setting_auto);
+        }
+        else{
+            title2 = getString(R.string.location_setting_manual);
+        }
+        title = LocationService.getParkTitle(this);
+
+        if(title!=null)
+            textView.setText(title);
+        else
+            textView.setText(getString(R.string.no_park_selected));
+        textView2.setText(title2);	    
 	}
 
 	@Override
@@ -376,29 +401,6 @@ public class WhatsInvasive extends Activity implements Observer {
 	
 	protected void showToast(String text,int length) {
 		Toast.makeText(this, text, length).show();
-	}
-    
-	protected void setParkTitle() {
-		// Set park caption
-		TextView textView = (TextView) this.findViewById(R.id.TextView01); 
-		TextView textView2 = (TextView) this.findViewById(R.id.TextView02); 
-		LinearLayout titleLayout = (LinearLayout) this.findViewById(R.id.LinearLayout01);
-		titleLayout.setOnClickListener(titleClickListener);
-		SharedPreferences preferences = this.getSharedPreferences(WhatsInvasive.PREFERENCES_USER, Activity.MODE_PRIVATE);
-		String title,title2;
-		if(preferences.getBoolean("locationServiceOn", true)){
-			title2 = getString(R.string.location_setting_auto);
-		}
-		else{
-			title2 = getString(R.string.location_setting_manual);
-		}
-		title = LocationService.getParkTitle(this);
-
-		if(title!=null)
-			textView.setText(title);
-		else
-			textView.setText(getString(R.string.no_park_selected));
-		textView2.setText(title2);
 	}
 
 	protected void setUserName() {
