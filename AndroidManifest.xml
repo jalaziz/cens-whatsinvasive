@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	package="edu.ucla.cens.whatsinvasive" android:versionCode="8" android:versionName="@string/version">
+	<uses-sdk android:minSdkVersion="3" />
+
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.CAMERA" />
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+	<uses-permission android:name="android.permission.CONTROL_LOCATION_UPDATES" />
+
+	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
+	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+
+	<application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="true">
+		<uses-library android:name="com.google.android.maps" />
+		
+		<activity android:name="WhatsInvasive" android:screenOrientation="portrait" android:configChanges="orientation|keyboard|keyboardHidden"
+			android:label="@string/app_name">
+			
+		</activity>
+		<activity android:name="Splash"  android:screenOrientation="portrait" android:configChanges="orientation|keyboard|keyboardHidden"><intent-filter><action android:name="android.intent.action.MAIN"></action>
+<category android:name="android.intent.category.LAUNCHER"></category>
+</intent-filter>
+</activity>
+		<activity android:name="TagLocation" android:screenOrientation="portrait"></activity>
+		
+		
+		
+		
+
+		<activity android:name="Settings" android:screenOrientation="portrait"></activity>
+		<activity android:name="Queue" android:screenOrientation="portrait"></activity>
+		<activity android:name="Login" ></activity>
+		<activity android:name="ViewTag" android:screenOrientation="portrait"></activity>
+		<activity android:name="TagHelp" android:screenOrientation="portrait"></activity>
+		
+		
+		<activity android:name="AreaList" android:screenOrientation="portrait"></activity>
+		<activity android:name="AreaMap" android:screenOrientation="portrait"></activity>
+		
+		<service android:name="edu.ucla.cens.whatsinvasive.services.UploadService"></service>
+		<service android:name="edu.ucla.cens.whatsinvasive.services.LocationService"></service>
+	<activity android:name="FeedbackTabs" android:screenOrientation="portrait"></activity>
+<activity android:name="Welcomer" android:screenOrientation="portrait"></activity>
+<activity android:name="HelpImg" android:screenOrientation="portrait"></activity>
+<activity android:name="BlockingTagUpdate"></activity>
+<activity android:name="NoteEdit" android:theme="@style/Float"></activity>
+</application>
+</manifest> 

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="fill_parent">
+	<ListView android:id="@id/android:list" android:layout_width="fill_parent"
+		android:layout_height="fill_parent" />
+	<LinearLayout android:id="@+id/android:empty"
+		android:layout_width="fill_parent" android:layout_height="fill_parent"
+		android:gravity="center" android:orientation="vertical">
+		<TextView android:text="@string/queue_message_empty"
+			android:id="@+id/TextView01" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:textSize="@dimen/twofour_sp" />
+		<TextView android:id="@+id/TextView02" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/empty_queue_text"
+			android:soundEffectsEnabled="false" android:gravity="center_horizontal"
+			android:textSize="@dimen/twotwo_sp" android:paddingBottom="20px" />
+		<TextView android:id="@+id/TextView03" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/empty_queue_text2"
+			android:autoLink="web|email" android:soundEffectsEnabled="false"
+			android:gravity="center_horizontal" android:textSize="@dimen/twotwo_sp" />
+		<TextView android:id="@+id/TextView04" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="@string/empty_queue_text3"
+			android:soundEffectsEnabled="false" android:gravity="center_horizontal"
+			android:textSize="@dimen/twotwo_sp" android:paddingTop="20px" />
+	</LinearLayout>
+</merge>

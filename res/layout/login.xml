@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<RelativeLayout android:id="@+id/RelativeLayout01"
+	android:background="@color/green" android:gravity="center_horizontal"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	xmlns:android="http://schemas.android.com/apk/res/android" android:padding="10px">
+	
+	<ImageView android:id="@+id/ImageView01" android:layout_alignParentTop="true" android:layout_centerHorizontal="true" android:src="@drawable/logo" android:layout_height="wrap_content" android:layout_width="wrap_content" android:scaleType="fitCenter" android:layout_marginBottom="10px"></ImageView><TextView android:text="@string/login_username" android:id="@+id/TextView01"
+		android:layout_below="@+id/ImageView01" android:layout_height="wrap_content"
+		android:layout_width="wrap_content" android:layout_marginRight="10px"
+		android:layout_marginTop="8px" android:layout_marginLeft="20px"></TextView>
+	<EditText android:id="@+id/EditText01" android:layout_height="wrap_content"
+		android:layout_width="wrap_content" android:layout_below="@+id/ImageView01"
+		android:layout_toRightOf="@+id/TextView01"
+		android:minWidth="200px" android:inputType="text"></EditText>
+	<TextView android:text="@string/login_password" android:id="@+id/TextView02" android:layout_marginLeft="20px" 
+		android:layout_below="@+id/EditText01" android:layout_height="wrap_content"
+		android:layout_width="wrap_content" android:layout_marginRight="10px"
+		android:layout_marginTop="8px"></TextView>
+	<EditText android:id="@+id/EditText02"
+		android:layout_toRightOf="@+id/TextView01" android:layout_below="@+id/EditText01"
+		android:layout_height="wrap_content" android:layout_width="wrap_content" android:inputType="textPassword" 
+		android:minWidth="200px"></EditText>
+
+	<Button android:text="@string/login_login_button" android:id="@+id/ButtonLogin"
+		android:layout_below="@+id/EditText02" android:layout_toRightOf="@+id/TextView01"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:textSize="20px" ></Button>
+	<Button android:text="@string/login_reset_button" android:id="@+id/ButtonReset"
+		android:layout_below="@+id/EditText02" android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:textSize="20px" android:layout_toRightOf="@+id/ButtonLogin"></Button>
+	<Button android:text="@string/login_register_button" android:id="@+id/ButtonRegister"
+		android:layout_toRightOf="@+id/TextView01"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:textSize="20px" android:layout_marginTop="20px" android:layout_below="@+id/ButtonLogin" android:width="190px"></Button><Button android:layout_toRightOf="@+id/TextView01"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:textSize="20px" android:text="@string/login_anon" android:layout_below="@+id/ButtonRegister" android:layout_marginTop="2px" android:width="190px" android:id="@+id/ButtonTest"></Button>
+
+</RelativeLayout>

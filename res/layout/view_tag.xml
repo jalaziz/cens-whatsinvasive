@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/RelativeLayout01"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	xmlns:android="http://schemas.android.com/apk/res/android" android:padding="10px">
+	<TextView android:text="@string/tag_name" android:id="@+id/TextView01"
+		android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge"></TextView>
+	<TextView android:layout_below="@+id/TextView01" android:id="@+id/TextView02"
+		android:layout_height="wrap_content" android:layout_width="wrap_content"
+		android:textAppearance="?android:attr/textAppearanceMedium" android:text="@string/tag_tagged_at "></TextView>
+	<TextView android:layout_below="@+id/TextView02" android:id="@+id/TextView03"
+		android:layout_height="wrap_content" android:layout_width="wrap_content"
+		android:text="@string/tag_not_yet" android:textAppearance="?android:attr/textAppearanceMedium"></TextView>
+	<TextView android:layout_below="@+id/TextView03" android:id="@+id/TextView04"
+		android:layout_height="wrap_content" android:layout_width="wrap_content"
+		android:text="@string/tag_location" android:textAppearance="?android:attr/textAppearanceMedium" android:layout_marginBottom="20px"></TextView>
+	<ImageView android:id="@+id/ImageView01"
+		android:layout_below="@+id/TextView04" android:scaleType="fitCenter" android:layout_above="@+id/TextView05" android:layout_width="fill_parent" android:layout_centerHorizontal="true" android:layout_height="wrap_content" android:layout_centerVertical="true"></ImageView>
+<TextView android:id="@+id/TextView05" android:layout_alignParentBottom="true" android:layout_width="fill_parent" android:layout_height="80px" android:text="@string/tag_note" android:textAppearance="?android:attr/textAppearanceMedium" android:layout_marginTop="5px"></TextView>
+</RelativeLayout>
