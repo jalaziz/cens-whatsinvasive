@@ -1,6 +1,10 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
+<<<<<<< HEAD
  * Original file: /home/jalaziz/Development/eclipse-workspaces/CENS/cens-whatsinvasive/src/edu/ucla/cens/whatsinvasive/data/ITagDatabaseCallback.aidl
+=======
+ * Original file: D:\\Users\\Khashim\\EclipseWorkspaces\\CENS\\whatsinvasive\\src\\edu\\ucla\\cens\\whatsinvasive\\data\\ITagDatabaseCallback.aidl
+>>>>>>> 0455e62ea835c764a19a74265c76040a1ffd5b7d
  */
 package edu.ucla.cens.whatsinvasive.data;
 import java.lang.String;
