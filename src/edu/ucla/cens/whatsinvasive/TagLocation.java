@@ -389,7 +389,6 @@ public class TagLocation extends ListActivity implements LocationListener {
 
                                 public void onClick(DialogInterface dialog,
                                         int which) {
-                                    // TODO Auto-generated method stub
                                     Intent intent = new Intent(
                                             android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                                     activity

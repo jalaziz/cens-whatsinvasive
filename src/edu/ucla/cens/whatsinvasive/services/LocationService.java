@@ -210,8 +210,6 @@ public class LocationService extends Service {
 
                         Thread.sleep(UPDATE_INTERVAL_ON);
                     } else {
-                        // updateTags();
-
                         Thread.sleep(UPDATE_INTERVAL_OFF);
                     }
                 } catch (InterruptedException e) {
@@ -406,10 +404,8 @@ public class LocationService extends Service {
                         downloadTags(id);
                     tagsCursor.close();
                 } else {
-                    this
-                            .setChanged(new UpdateData(
-                                    context
-                                            .getString(R.string.locationservice_no_park),
+                    this.setChanged(new UpdateData(
+                                    context.getString(R.string.locationservice_no_park),
                                     true));
                 }
 
@@ -466,9 +462,9 @@ public class LocationService extends Service {
                             area.longitude = object.getDouble("longitude");
                             area.distance = roundToKm((float) (object
                                     .getDouble("distance") * 1000.0f)); // distance
-                                                                        // is
-                                                                        // returned
-                                                                        // in km
+                            // is
+                            // returned
+                            // in km
 
                             db.insertArea(area);
                         } catch (JSONException e) {
