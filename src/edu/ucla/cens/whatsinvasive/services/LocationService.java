@@ -153,7 +153,7 @@ public class LocationService extends Service {
         return m_lastLoc;
     }
 
-    private static class GpsListener implements LocationListener {
+    private class GpsListener implements LocationListener {
 
         public void onLocationChanged(Location arg0) {
             if (arg0 != null) {
@@ -213,7 +213,6 @@ public class LocationService extends Service {
                         Thread.sleep(UPDATE_INTERVAL_OFF);
                     }
                 } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
@@ -462,9 +461,6 @@ public class LocationService extends Service {
                             area.longitude = object.getDouble("longitude");
                             area.distance = roundToKm((float) (object
                                     .getDouble("distance") * 1000.0f)); // distance
-                            // is
-                            // returned
-                            // in km
 
                             db.insertArea(area);
                         } catch (JSONException e) {

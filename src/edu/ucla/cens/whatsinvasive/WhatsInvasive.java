@@ -154,6 +154,7 @@ public class WhatsInvasive extends Activity implements Observer {
 
 				try {
 					service.registerCallback(tagDatabaseCallback);
+					updatePark();
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
