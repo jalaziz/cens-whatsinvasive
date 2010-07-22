@@ -30,7 +30,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import edu.ucla.cens.whatsinvasive.data.PhotoDatabase;
 import edu.ucla.cens.whatsinvasive.data.PhotoDatabase.OnChangeListener;
 import edu.ucla.cens.whatsinvasive.data.PhotoDatabase.PhotoDatabaseRow;
-import edu.ucla.cens.whatsinvasive.services.UploadService;
 import edu.ucla.cens.whatsinvasive.tools.Media;
 
 public class Queue extends ListActivity {
@@ -44,15 +43,9 @@ public class Queue extends ListActivity {
 	private PhotoDatabase mDatabase;
 	private Cursor mCursor;
 	
-	private Boolean uploadServiceWasStopped = false;
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		//stop upload service while showing this view
-		Intent service = new Intent(this, UploadService.class);
-		uploadServiceWasStopped = this.stopService(service);
 
 		this.setContentView(R.layout.queue);
 		this.setTitle(R.string.title_queue);
@@ -138,17 +131,6 @@ public class Queue extends ListActivity {
 	    mCursor.close();
 	    
 	    super.onStop();
-	}
-	
-	@Override
-	protected void onDestroy() {
-		//if upload service was stopped while showing this view, restart it
-		if(uploadServiceWasStopped) {
-		    Intent service = new Intent(this, UploadService.class);
-		    this.startService(service);
-		}
-		
-		super.onDestroy();
 	}
 	
 	private void showOnMap(String lat, String lon){
