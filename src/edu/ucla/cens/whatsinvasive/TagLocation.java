@@ -645,10 +645,9 @@ public class TagLocation extends ListActivity implements LocationListener {
                 image.setPadding(1, 1, 1, 1);
 
             } else {
-                image.setImageBitmap(null);
-
-                params.setMargins(0, 0, 0, 0);
-                text.setLayoutParams(params);
+                image.setImageResource(R.drawable.downloading);
+                
+                image.setPadding(1, 1, 1, 1);
             }
 
             info.setTag(tag);
