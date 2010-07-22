@@ -54,7 +54,7 @@
 			android:layout_height="wrap_content" android:id="@+id/check_group"
 			android:layout_alignParentRight="true" android:gravity="right"
 			android:layout_marginTop="-6sp" android:background="@color/light_green"
-			android:paddingTop="10px" android:paddingBottom="5px">
+			android:paddingTop="10px" android:paddingBottom="5px" android:paddingLeft="10px">
 			<CheckBox android:id="@+id/with_photo" android:layout_width="wrap_content"
 				android:layout_height="wrap_content" android:width="50px"
 				android:layout_marginLeft="10dp" />
