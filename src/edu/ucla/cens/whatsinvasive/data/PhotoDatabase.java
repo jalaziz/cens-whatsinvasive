@@ -220,7 +220,7 @@ public class PhotoDatabase {
 		{
 			String where = KEY_PHOTO_UPLOADED +" IS NULL AND (strftime('%s', 'now')-strftime('%s', "+ KEY_PHOTO_TIME +"))>"+ delay;
 			
-			Cursor c = db.query(DATABASE_TABLE, new String[] {KEY_PHOTO_ROWID, KEY_PHOTO_LONGITUDE, KEY_PHOTO_LATITUDE, KEY_PHOTO_TIME, KEY_PHOTO_FILENAME, KEY_PHOTO_TAGS, KEY_PHOTO_AREA, KEY_PHOTO_UPLOADED, KEY_PHOTO_AMOUNT, KEY_PHOTO_NOTE}, where, null, null, null, null);
+			Cursor c = db.query(DATABASE_TABLE, new String[] {KEY_PHOTO_ROWID, KEY_PHOTO_LONGITUDE, KEY_PHOTO_LATITUDE, KEY_PHOTO_TIME, KEY_PHOTO_FILENAME, KEY_PHOTO_TAGS, KEY_PHOTO_AREA, KEY_PHOTO_UPLOADED, KEY_PHOTO_AMOUNT, KEY_PHOTO_NOTE}, where, null, null, null, KEY_PHOTO_TIME + " ASC");
 			int numRows = c.getCount();
 			
 			c.moveToFirst();
