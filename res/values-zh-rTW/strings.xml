@@ -1,16 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
-<color name="black">#000000</color>
-<color name="green">#0f2300</color>
-<color name="light_green">#0f4500</color>
-<color name="lighter_green">#0f6700</color>
-<color name="transparent_black">#AF000000</color> 
-<color name="transparent_white">#AFFFFFFF</color>
-<color name="white">#FFFFFF</color>
-<color name="yellow">#FFF345</color>
-<dimen name="twofour_sp">24sp</dimen>
-<dimen name="twotwo_sp">22sp</dimen>
-<dimen name="twozero_sp">20sp</dimen>
 <string name="about_version">版本:</string>
 <string name="aboutus1">使用 Android 手機說明我們識別和定位您所在地區的入侵植物物種。\n\n保護工作缺乏此地區野草的最新資訊, 您可以使用這個軟體 \&quot;標記\&quot; 野草的位置來進行說明。\n\n國家公園管理處和本土保護成員將使用這些位置資料來集中他們的消除工作。</string>
 <string name="aboutus2">請存取我們的網站瞭解更多資訊:</string>

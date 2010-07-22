@@ -1,16 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<color name="black">#000000</color>
-<color name="green">#0f2300</color>
-<color name="light_green">#0f4500</color>
-<color name="lighter_green">#0f6700</color>
-<color name="transparent_black">#AF000000</color> 
-<color name="transparent_white">#AFFFFFFF</color>
-<color name="white">#FFFFFF</color>
-<color name="yellow">#FFF345</color>
-<dimen name="twofour_sp">24sp</dimen>
-<dimen name="twotwo_sp">22sp</dimen>
-<dimen name="twozero_sp">20sp</dimen>
 <string name="about_version">Version:</string>
 <string name="aboutus1">Help us identify and locate invasive plant species in your area using your Android phone.\n\nConservation efforts lack up-to-date information on the locations of weeds and you can help by \&quot;tagging\&quot; locations of weeds using this application.\n\nThe National Park Service and local conservation members will use these location data to focus their removal efforts.</string>
 <string name="aboutus2">Please visit our website for more information:</string>

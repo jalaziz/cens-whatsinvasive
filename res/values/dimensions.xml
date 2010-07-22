@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<dimen name="twofour_sp">24sp</dimen>
+	<dimen name="twotwo_sp">22sp</dimen>
+	<dimen name="twozero_sp">20sp</dimen>
+</resources>
