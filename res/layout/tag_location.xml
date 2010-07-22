@@ -7,8 +7,7 @@
 		android:orientation="vertical" android:layout_height="wrap_content">
 		<RelativeLayout android:layout_height="wrap_content"
 			android:layout_alignParentLeft="true" android:id="@+id/radio_buttons"
-			android:layout_toRightOf="@+id/check_group" android:layout_width="wrap_content"
-			android:paddingTop="10px" android:paddingBottom="5px">
+			android:paddingTop="10px" android:paddingBottom="5px" android:layout_width="wrap_content" android:paddingLeft="10dip">
 			<RadioGroup android:id="@+id/radio_group"
 				android:layout_height="wrap_content" android:layout_marginRight="10dp"
 				android:orientation="horizontal" android:layout_alignParentLeft="true"

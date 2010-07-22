@@ -86,11 +86,6 @@ public class TagLocation extends ListActivity implements LocationListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         checkGPS();
-        /*
-         * if(!isLocationEnabled(this)){
-         * this.setResult(WhatsInvasive.RESULT_LOCATION_DISABLED);
-         * this.finish(); return; }
-         */
 
         // Check user preferences
         mPreferences = this.getSharedPreferences(PREFERENCES_USER,
@@ -126,8 +121,6 @@ public class TagLocation extends ListActivity implements LocationListener {
         }
 
         if (lManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            // current_location =
-            // lManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             lManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                     GPS_POLL_INTERVAL, 0, this);
         }
@@ -619,7 +612,6 @@ public class TagLocation extends ListActivity implements LocationListener {
             TextView text = (TextView) view.findViewById(R.id.TextView01);
             final ImageView image = (ImageView) view
                     .findViewById(R.id.ImageView01);
-            ImageView info = (ImageView) view.findViewById(R.id.infoimage);
             
             // set item title text
 
@@ -650,8 +642,8 @@ public class TagLocation extends ListActivity implements LocationListener {
                 image.setPadding(1, 1, 1, 1);
             }
 
-            info.setTag(tag);
-            info.setOnClickListener(new View.OnClickListener() {
+            image.setTag(tag);
+            image.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     Tag data = (Tag) v.getTag();
 

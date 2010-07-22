@@ -17,45 +17,47 @@ public final class R {
     public static final class attr {
     }
     public static final class color {
-        public static final int black=0x7f060000;
-        public static final int green=0x7f060001;
-        public static final int light_green=0x7f060002;
-        public static final int lighter_green=0x7f060003;
-        public static final int transparent_black=0x7f060004;
-        public static final int transparent_white=0x7f060005;
-        public static final int white=0x7f060006;
-        public static final int yellow=0x7f060007;
+        public static final int black=0x7f050000;
+        public static final int dim_gray=0x7f050008;
+        public static final int green=0x7f050001;
+        public static final int light_green=0x7f050002;
+        public static final int lighter_green=0x7f050003;
+        public static final int transparent_black=0x7f050004;
+        public static final int transparent_white=0x7f050005;
+        public static final int white=0x7f050006;
+        public static final int yellow=0x7f050007;
     }
     public static final class dimen {
-        public static final int twofour_sp=0x7f070000;
-        public static final int twotwo_sp=0x7f070001;
-        public static final int twozero_sp=0x7f070002;
+        public static final int twofour_sp=0x7f060000;
+        public static final int twotwo_sp=0x7f060001;
+        public static final int twozero_sp=0x7f060002;
     }
     public static final class drawable {
         public static final int bborder=0x7f020000;
         public static final int btn_check_buttonless_on=0x7f020001;
         public static final int btn_rating_star_off_pressed=0x7f020002;
         public static final int divider_vertical_dark=0x7f020003;
-        public static final int downloading=0x7f020004;
-        public static final int green_button=0x7f020005;
-        public static final int ic_menu_camera=0x7f020006;
-        public static final int ic_menu_edit=0x7f020007;
-        public static final int ic_menu_no_camera=0x7f020008;
-        public static final int ic_menu_no_edit=0x7f020009;
-        public static final int icon=0x7f02000a;
-        public static final int info_icon_big=0x7f02000b;
-        public static final int line_portrait=0x7f02000c;
-        public static final int logo=0x7f02000d;
-        public static final int logo_land=0x7f02000e;
-        public static final int main_help_button1=0x7f02000f;
-        public static final int main_help_photo=0x7f020010;
-        public static final int main_help_quantity=0x7f020011;
-        public static final int main_help_results=0x7f020012;
-        public static final int notes1=0x7f020013;
-        public static final int notes2=0x7f020014;
-        public static final int notes_no_1=0x7f020015;
-        public static final int notes_no_2=0x7f020016;
-        public static final int splashscreen=0x7f020017;
+        public static final int divider_vertical_light=0x7f020004;
+        public static final int downloading=0x7f020005;
+        public static final int green_button=0x7f020006;
+        public static final int ic_menu_camera=0x7f020007;
+        public static final int ic_menu_edit=0x7f020008;
+        public static final int ic_menu_no_camera=0x7f020009;
+        public static final int ic_menu_no_edit=0x7f02000a;
+        public static final int icon=0x7f02000b;
+        public static final int info_icon_big=0x7f02000c;
+        public static final int line_portrait=0x7f02000d;
+        public static final int logo=0x7f02000e;
+        public static final int logo_land=0x7f02000f;
+        public static final int main_help_button1=0x7f020010;
+        public static final int main_help_photo=0x7f020011;
+        public static final int main_help_quantity=0x7f020012;
+        public static final int main_help_results=0x7f020013;
+        public static final int notes1=0x7f020014;
+        public static final int notes2=0x7f020015;
+        public static final int notes_no_1=0x7f020016;
+        public static final int notes_no_2=0x7f020017;
+        public static final int splashscreen=0x7f020018;
     }
     public static final class id {
         public static final int Button01=0x7f090014;
@@ -83,9 +85,9 @@ public final class R {
         public static final int LinearLayout02=0x7f09000a;
         public static final int ListView01=0x7f090003;
         public static final int MapView01=0x7f090006;
-        public static final int RelativeLayout=0x7f09006c;
+        public static final int RelativeLayout=0x7f09006b;
         public static final int RelativeLayout01=0x7f090000;
-        public static final int RelativeLayout02=0x7f090064;
+        public static final int RelativeLayout02=0x7f090062;
         public static final int ScrollView01=0x7f090017;
         public static final int TagRefreshButton=0x7f09004b;
         public static final int TextView01=0x7f090004;
@@ -125,38 +127,37 @@ public final class R {
         public static final int ToggleButtonLocation=0x7f090049;
         public static final int ToggleButtonUpload=0x7f090048;
         public static final int TwoLineListItem01=0x7f090047;
-        public static final int aboutus1=0x7f09006e;
-        public static final int aboutus2=0x7f09006f;
-        public static final int aboutus2_5=0x7f090070;
-        public static final int aboutus3=0x7f090071;
-        public static final int aboutus4=0x7f090072;
+        public static final int aboutus1=0x7f09006d;
+        public static final int aboutus2=0x7f09006e;
+        public static final int aboutus2_5=0x7f09006f;
+        public static final int aboutus3=0x7f090070;
+        public static final int aboutus4=0x7f090071;
         public static final int body=0x7f090044;
         public static final int cancel=0x7f090046;
         public static final int center=0x7f090059;
-        public static final int check_group=0x7f09005f;
+        public static final int check_group=0x7f090066;
         public static final int confirm=0x7f090045;
-        public static final int credits=0x7f090073;
-        public static final int display_few=0x7f090066;
-        public static final int display_many=0x7f090067;
-        public static final int display_note=0x7f09006b;
-        public static final int display_one=0x7f090065;
-        public static final int display_photo=0x7f090069;
-        public static final int divider=0x7f09005c;
-        public static final int few_radio_button=0x7f090062;
+        public static final int credits=0x7f090072;
+        public static final int display_few=0x7f090064;
+        public static final int display_many=0x7f090065;
+        public static final int display_note=0x7f09006a;
+        public static final int display_one=0x7f090063;
+        public static final int display_photo=0x7f090068;
+        public static final int divider=0x7f09005b;
+        public static final int few_radio_button=0x7f090060;
         public static final int flipper=0x7f090057;
         public static final int help_title=0x7f090013;
-        public static final int infoimage=0x7f09005b;
         public static final int layout1=0x7f090009;
         public static final int layout2=0x7f09000d;
         public static final int left=0x7f090058;
-        public static final int many_radio_button=0x7f090063;
+        public static final int many_radio_button=0x7f090061;
         public static final int mypests=0x7f09000f;
         public static final int myphotos=0x7f090010;
         public static final int myrank=0x7f090011;
         public static final int myrank2=0x7f09000b;
-        public static final int one_radio_button=0x7f090061;
-        public static final int radio_buttons=0x7f09005e;
-        public static final int radio_group=0x7f090060;
+        public static final int one_radio_button=0x7f09005f;
+        public static final int radio_buttons=0x7f09005d;
+        public static final int radio_group=0x7f09005e;
         public static final int right=0x7f09005a;
         public static final int settings01=0x7f09004c;
         public static final int settings02=0x7f09004d;
@@ -169,11 +170,11 @@ public final class R {
         public static final int settings09=0x7f090054;
         public static final int settings10=0x7f090055;
         public static final int tabhost=0x7f090008;
-        public static final int top_bar=0x7f09005d;
+        public static final int top_bar=0x7f09005c;
         public static final int topusers1=0x7f090012;
-        public static final int version=0x7f09006d;
-        public static final int with_note=0x7f09006a;
-        public static final int with_photo=0x7f090068;
+        public static final int version=0x7f09006c;
+        public static final int with_note=0x7f090069;
+        public static final int with_photo=0x7f090067;
     }
     public static final class layout {
         public static final int area_list=0x7f030000;
@@ -396,6 +397,6 @@ public final class R {
         public static final int whatsinvasive_notlogged=0x7f0800c0;
     }
     public static final class style {
-        public static final int Float=0x7f050000;
+        public static final int Float=0x7f070000;
     }
 }
