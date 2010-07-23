@@ -641,9 +641,10 @@ public class TagLocation extends ListActivity implements LocationListener {
                 
                 image.setPadding(1, 1, 1, 1);
             }
-
-            image.setTag(tag);
-            image.setOnClickListener(new View.OnClickListener() {
+            
+            View thumbnail = view.findViewById(R.id.Thumbnail);
+            thumbnail.setTag(tag);
+            thumbnail.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     Tag data = (Tag) v.getTag();
 
