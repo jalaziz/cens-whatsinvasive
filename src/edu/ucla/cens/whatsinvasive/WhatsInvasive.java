@@ -97,7 +97,7 @@ public class WhatsInvasive extends Activity implements Observer {
     private final View.OnClickListener logoClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             Intent intent = new Intent(WhatsInvasive.this, Splash.class);
-            intent.putExtra("noTimer", true);
+            intent.putExtra("return", true);
             WhatsInvasive.this.startActivity(intent);;
         }
     };

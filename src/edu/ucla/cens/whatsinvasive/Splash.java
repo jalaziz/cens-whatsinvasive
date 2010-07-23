@@ -10,6 +10,7 @@ import android.view.Window;
 
 public class Splash extends Activity {
     private boolean m_firstRun = false;
+    private boolean m_return;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -21,6 +22,7 @@ public class Splash extends Activity {
         SharedPreferences preferences = this.getSharedPreferences(WhatsInvasive.PREFERENCES_USER, Activity.MODE_PRIVATE);
 
         m_firstRun = preferences.getBoolean("firstRun", true);		
+        m_return = getIntent().getBooleanExtra("return", false);
 
         new Handler().postDelayed(new Runnable() {
             public void run() {
@@ -40,13 +42,16 @@ public class Splash extends Activity {
     private synchronized void startNextActivity() {
         Intent intent;
         
-        if(m_firstRun) {
-            intent = new Intent(this, Welcomer.class);
-        } else {
-            intent = new Intent(this, WhatsInvasive.class); 
+        if(!m_return) {
+            if(m_firstRun) {
+                intent = new Intent(this, Welcomer.class);
+            } else {
+                intent = new Intent(this, WhatsInvasive.class); 
+            }
+            
+            this.startActivity(intent);
         }
         
-        this.startActivity(intent);
         Splash.this.finish();
     }
 }
