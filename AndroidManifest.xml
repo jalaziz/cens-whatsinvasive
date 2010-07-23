@@ -48,6 +48,6 @@
 <activity android:name="Welcomer" android:screenOrientation="portrait"></activity>
 <activity android:name="HelpImg" android:screenOrientation="portrait"></activity>
 <activity android:name="BlockingTagUpdate"></activity>
-<activity android:name="NoteEdit" android:theme="@style/Float"></activity>
+<activity android:name="NoteEdit" android:theme="@style/Float" android:screenOrientation="sensor"></activity>
 </application>
 </manifest> 
