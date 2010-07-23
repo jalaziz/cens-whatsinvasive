@@ -143,6 +143,14 @@ public class Settings extends Activity implements Observer {
 				} else if(resultCode == AreaList.RESULT_TAGS_SAME) {
 					Toast.makeText(this, getString(R.string.tag_list_use_existing), Toast.LENGTH_SHORT).show();
 				}
+				
+				ToggleButton locationToggle = (ToggleButton)findViewById(R.id.ToggleButtonLocation);		
+				
+				if(m_preferences.getBoolean("locationServiceOn", true)) {
+		            locationToggle.setChecked(true);
+		        } else {
+		            locationToggle.setChecked(false);
+		        }
 				break;
 			case ACTIVITY_LOGIN:
 				if(resultCode == Activity.RESULT_OK) {
