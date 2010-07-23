@@ -19,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnCreateContextMenuListener;
-import android.view.View.OnLongClickListener;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ResourceCursorAdapter;
@@ -53,15 +52,11 @@ public class Queue extends ListActivity {
         TextView extrat = new TextView(this);   
         extrat.setAutoLinkMask(Linkify.WEB_URLS);
         extrat.setText(getString(R.string.queue_message_full));
-        extrat.setTextSize(22);
-        extrat.setOnLongClickListener(new OnLongClickListener(){
-
-            public boolean onLongClick(View v) {
-                return false;
-            }
-            
-        });     
-        getListView().addFooterView(extrat);   
+        extrat.setTextSize(18);
+        extrat.setClickable(false);
+        extrat.setLongClickable(false);  
+        
+        getListView().addFooterView(extrat);
         getListView().setFooterDividersEnabled(true);
         
         mDatabase = new PhotoDatabase(this);
