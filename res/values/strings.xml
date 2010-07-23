@@ -100,7 +100,8 @@
 <string name="login_timeout_title">Timeout</string>
 <string name="login_username">Username</string>
 <string name="login_username_must_not_empty">The username and password cannot be empty.</string>
-<string name="main_button_mapbug">Map a Bug!</string><string name="main_button_mapweed">Map a Weed!</string>
+<string name="main_button_mapbug">Map a Pest!</string>
+<string name="main_button_mapweed">Map a Weed!</string>
 <string name="main_button_results">My Results</string>
 <string name="main_help_para2_1">It will allow you to do two things:</string>
 <string name="main_help_para2_2">See the list of the top invasive plants.</string>
