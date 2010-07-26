@@ -52,9 +52,7 @@ import edu.ucla.cens.whatsinvasive.tools.CustomHttpClient;
 import edu.ucla.cens.whatsinvasive.tools.UpdateThread.UpdateData;
 
 public class WhatsInvasive extends Activity implements Observer {
-	private final int ACTIVITY_TAG_LOCATION = 0;
-	private final int ACTIVITY_LOGIN = 1;
-	private final int ACTIVITY_SPLASH = 2;
+	private final int ACTIVITY_LOGIN = 0;
 
 	private final int MENU_ABOUT = 0;
 	private final int MENU_FEEDBACK = 1;
@@ -422,7 +420,7 @@ public class WhatsInvasive extends Activity implements Observer {
 				m_preferences.edit().putBoolean("gpsOffAlert2", true).commit();
 				Intent intent = new Intent(WhatsInvasive.this, TagLocation.class);
 				intent.putExtra("Type", TagType.WEED);
-				WhatsInvasive.this.startActivityForResult(intent, ACTIVITY_TAG_LOCATION);
+				WhatsInvasive.this.startActivity(intent);
 			}
 		});
 		
@@ -432,7 +430,7 @@ public class WhatsInvasive extends Activity implements Observer {
                 m_preferences.edit().putBoolean("gpsOffAlert2", true).commit();
                 Intent intent = new Intent(WhatsInvasive.this, TagLocation.class);
                 intent.putExtra("Type", TagType.BUG);
-                WhatsInvasive.this.startActivityForResult(intent, ACTIVITY_TAG_LOCATION);
+                WhatsInvasive.this.startActivity(intent);
             }
         });
 		
@@ -497,23 +495,6 @@ public class WhatsInvasive extends Activity implements Observer {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		
 		switch(requestCode){
-		case ACTIVITY_TAG_LOCATION:
-			if(resultCode==Activity.RESULT_OK) {
-				Toast tag = Toast.makeText(this, "blah", Toast.LENGTH_LONG);
-				tag.setDuration(5);
-				tag.setText(getString(R.string.invasive_mapped_notice));
-				tag.show();
-
-				Intent intent = new Intent(WhatsInvasive.this, TagLocation.class);
-				intent.putExtra("Type", data.getSerializableExtra("Type"));
-				WhatsInvasive.this.startActivityForResult(intent, ACTIVITY_TAG_LOCATION);
-			}else if(resultCode==RESULT_LOCATION_DISABLED){
-				//TagLocation.isLocationEnabled(this);
-			}else if(resultCode==RESULT_LOCATION_MISSING){
-				Toast.makeText(this, "Failed to acquire location data.", Toast.LENGTH_LONG).show();
-			}
-
-			break;
 		case ACTIVITY_LOGIN:
 			if (resultCode == Activity.RESULT_OK) {
 				checkVersion();

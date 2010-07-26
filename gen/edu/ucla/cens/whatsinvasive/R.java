@@ -289,6 +289,7 @@ public final class R {
         public static final int help_tagging_para5=0x7f080054;
         public static final int help_tagging_title=0x7f080055;
         public static final int invasive_mapped_notice=0x7f08007e;
+        public static final int invasive_mapping_failed=0x7f0800c5;
         public static final int location_setting_auto=0x7f080056;
         public static final int location_setting_manual=0x7f080057;
         public static final int locationservice_no_park=0x7f080058;

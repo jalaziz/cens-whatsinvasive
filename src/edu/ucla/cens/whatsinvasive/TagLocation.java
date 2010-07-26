@@ -39,6 +39,7 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import edu.ucla.cens.whatsinvasive.data.PhotoDatabase;
@@ -530,14 +531,10 @@ public class TagLocation extends ListActivity implements LocationListener {
 
         if (TagLocation.this.saveToDatabase(tag,
                 amount, note, filename)) {
-            TagLocation.this.setResult(Activity.RESULT_OK,
-                    result);
+            Toast.makeText(this, getString(R.string.invasive_mapped_notice), 5).show();
         } else {
-            TagLocation.this
-                    .setResult(WhatsInvasive.RESULT_LOCATION_MISSING);
+            Toast.makeText(this, getString(R.string.invasive_mapping_failed), Toast.LENGTH_LONG).show();
         }
-    
-        TagLocation.this.finish();
     }
     
     private class TagItemClickListener implements OnItemClickListener

@@ -196,4 +196,5 @@
 <string name="park_location_updated">Park updated</string>
 <string name="title_note">Obversation Note</string>
 <string name="note_title_prefix">Note for</string>
+<string name="invasive_mapping_failed">Failed to acquire location data.</string>
 </resources>
