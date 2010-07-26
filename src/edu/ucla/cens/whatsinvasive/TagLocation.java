@@ -502,7 +502,10 @@ public class TagLocation extends ListActivity implements LocationListener {
         if(!mNote.isChecked()) {
             recordObservation();
         } else {
+            
             Intent intent = new Intent(this, NoteEdit.class);
+            String title = getResources().getString(R.string.note_title_prefix) + " " + getIntent().getStringExtra("Tag");
+            intent.putExtra("title", title);
             startActivityForResult(intent, ACTIVITY_CAPTURE_NOTE);
         }
     }

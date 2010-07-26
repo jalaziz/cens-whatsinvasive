@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class NoteEdit extends Activity {
 
+    TextView mTitle;
     EditText mBodyText;
     int mRowId;
     
@@ -17,7 +19,9 @@ public class NoteEdit extends Activity {
         super.onCreate(savedInstanceState);
         
         setContentView(R.layout.note_edit);
+        setTitle(R.string.title_note);
         
+        mTitle = (TextView) findViewById(R.id.title);
         mBodyText = (EditText) findViewById(R.id.body);
         
         Button confirmButton = (Button) findViewById(R.id.confirm);
@@ -31,10 +35,16 @@ public class NoteEdit extends Activity {
         
         if(savedInstanceState != null) {
             mRowId = savedInstanceState.getInt("id");
+            mTitle.setText(savedInstanceState.getString("title"));
             mBodyText.setText(savedInstanceState.getString("note"));
         } else if(extras != null) {
+            String title = extras.getString("title");
             String body = extras.getString("note");
             mRowId = extras.getInt("id");
+            
+            if(title != null) {
+                mTitle.setText(title);
+            }
             
             if(body != null) {
                 mBodyText.setText(body);
@@ -70,5 +80,6 @@ public class NoteEdit extends Activity {
         super.onSaveInstanceState(outState);
         outState.putInt("id", mRowId);
         outState.putString("note", mBodyText.getText().toString());
+        outState.putString("title", mTitle.getText().toString());
     }
 }

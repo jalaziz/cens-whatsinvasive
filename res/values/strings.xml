@@ -194,4 +194,6 @@
 <string name="whatsinvasive_notlogged">User not logged in.</string>
 <string name="title_feedback">What\'s Invasive! - Results</string>
 <string name="park_location_updated">Park updated</string>
+<string name="title_note">Obversation Note</string>
+<string name="note_title_prefix">Note for</string>
 </resources>
