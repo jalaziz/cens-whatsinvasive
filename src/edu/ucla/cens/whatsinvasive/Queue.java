@@ -161,7 +161,7 @@ public class Queue extends ListActivity {
 		        
 	            Intent intent2 = new Intent(this, NoteEdit.class);
 	            intent2.putExtra("id", data.id);
-	            String title = getResources().getString(R.string.note_title_prefix) + " " + row.tagsValue;
+	            String title = getString(R.string.note_title_prefix) + " " + row.tagsValue;
 	            intent2.putExtra("title", title);
 	            intent2.putExtra("note", row.noteValue);
 	             
