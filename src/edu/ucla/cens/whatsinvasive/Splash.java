@@ -42,6 +42,9 @@ public class Splash extends Activity {
     private synchronized void startNextActivity() {
         Intent intent;
         
+        if(Splash.this.isFinishing())
+            return;
+        
         if(!m_return) {
             if(m_firstRun) {
                 intent = new Intent(this, Welcomer.class);
