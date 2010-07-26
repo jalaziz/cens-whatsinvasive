@@ -26,7 +26,6 @@ public class PhotoDatabase {
 	public static final String KEY_PHOTO_NOTE = "photo_note";
 	
 	private static boolean databaseOpen = false;
-	private static Object dbLock = new Object();
 	public static final String TAG = "photoDB";
 	private final DatabaseHelper dbHelper;
 	private SQLiteDatabase db;
@@ -95,35 +94,37 @@ public class PhotoDatabase {
 		dbHelper = new DatabaseHelper(mCtx);
 	}
 	
-	public PhotoDatabase open() throws SQLException{
+	public synchronized PhotoDatabase open() throws SQLException {
+	    while (databaseOpen)
+        {
+            try
+            {
+                wait();
+            }
+            catch (InterruptedException e){}
 
-		synchronized(dbLock)
-		{
-			while (databaseOpen)
-			{
-				try
-				{
-					dbLock.wait();
-				}
-				catch (InterruptedException e){}
+        }
+        
+        databaseOpen = true;
+        db = dbHelper.getWritableDatabase();
 
-			}
-			
-			databaseOpen = true;
-			db = dbHelper.getWritableDatabase();
-
-			return this;
-		}	
+        return this;
 	}
 	
-	public void close()
+	public synchronized void close()
 	{
-		synchronized(dbLock)
-		{
-			dbHelper.close();
-			databaseOpen = false;
-			dbLock.notify();
-		}
+		dbHelper.close();
+		databaseOpen = false;
+		notify();
+	}
+	
+	public synchronized boolean tryOpen() {
+	    if(!databaseOpen) {
+	        open();
+	        return true;
+	    }
+	    
+	    return false;
 	}
 	
 	public long createPhoto(String lon, String lat, String time, String filename, String tags, Long area, String amount, String note)
@@ -160,12 +161,10 @@ public class PhotoDatabase {
 		}
 	}
 	
-	public Cursor getReadCursor(){
-	    synchronized(dbLock) {
-	        if(!databaseOpen) {
-	            db = dbHelper.getReadableDatabase();
-	        }
-	    }
+	public synchronized Cursor getReadCursor(){
+        if(!databaseOpen) {
+            db = dbHelper.getReadableDatabase();
+        }
 	    
 		return db.query(DATABASE_TABLE, new String[]{KEY_PHOTO_ROWID, KEY_PHOTO_FILENAME, KEY_PHOTO_TAGS, KEY_PHOTO_TIME, KEY_PHOTO_LATITUDE, KEY_PHOTO_LONGITUDE, KEY_PHOTO_AREA, KEY_PHOTO_UPLOADED, KEY_PHOTO_AMOUNT, KEY_PHOTO_NOTE}, null, null, null, null, KEY_PHOTO_TIME + " DESC");
 	}

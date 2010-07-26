@@ -100,7 +100,7 @@ public class Queue extends ListActivity {
 	
 	@Override
 	protected void onResume() {
-	    mDatabase.open();
+	    mDatabase.tryOpen();
         mCursor = mDatabase.getReadCursor();
 	    
         startManagingCursor(mCursor);
@@ -186,7 +186,9 @@ public class Queue extends ListActivity {
                 int rowId = data.getIntExtra("id", -1);
                 String note = data.getStringExtra("note");
                 
+                mDatabase.tryOpen();
                 mDatabase.updateNote(rowId, note);
+                
                 break;
             }
         }
@@ -223,7 +225,7 @@ public class Queue extends ListActivity {
 			
 			ImageView image = (ImageView) view.findViewById(android.R.id.selectedIcon);
 			
-			if(cursor.getString(indexPhoto)!=null){
+			if(cursor.getString(indexPhoto) != null){
 				String photo = cursor.getString(indexPhoto);
 				
 				if((new File(photo)).exists()){
