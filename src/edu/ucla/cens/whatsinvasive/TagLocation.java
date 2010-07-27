@@ -28,12 +28,16 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.format.Time;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
@@ -131,12 +135,48 @@ public class TagLocation extends ListActivity implements LocationListener {
         
         Cursor tags = mDatabase.getTags(LocationService.getParkId(this), TagLocation.this.tagType);
         startManagingCursor(tags);
+        
+        getListView().addHeaderView(getListHeader());
 
         setListAdapter(new TagAdapter(tags));
         
         getListView().setOnItemClickListener(new TagItemClickListener());
         
         updateButtons();
+    }
+
+    private View getListHeader() {
+        final float scale = getResources().getDisplayMetrics().density;
+        
+        LinearLayout layout = new LinearLayout(this);   
+        layout.setLayoutParams(new ListView.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+        layout.setBackgroundColor(getResources().getColor(R.color.dark_gray));
+        layout.setClickable(false);
+        layout.setLongClickable(false);
+        
+        TextView info = new TextView(this);
+        info.setGravity(Gravity.CENTER);
+        info.setWidth((int) ((105 * scale) + 0.5f));
+        info.setText(R.string.header_tag_info);
+        info.setTextSize(16);
+        info.setTextColor(getResources().getColor(R.color.white));
+        
+        View divider = new View(this);
+        divider.setBackgroundResource(R.drawable.divider_vertical_light);
+        divider.setLayoutParams(new LinearLayout.LayoutParams(1, LayoutParams.FILL_PARENT));
+        
+        TextView observation = new TextView(this);
+        observation.setGravity(Gravity.CENTER);
+        observation.setText(R.string.header_tag_observation);
+        observation.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 1));
+        observation.setTextSize(16);
+        observation.setTextColor(getResources().getColor(R.color.white));
+        
+        layout.addView(info);
+        layout.addView(divider);
+        layout.addView(observation);
+        
+        return layout;
     }
 
     @Override
@@ -542,6 +582,9 @@ public class TagLocation extends ListActivity implements LocationListener {
         public void onItemClick(AdapterView<?> arg0, View v, int arg2,
                 long arg3) {
             Tag data = (Tag) v.getTag();
+            
+            if(data == null)
+                return;
 
             final String tagtext = data.title;
 

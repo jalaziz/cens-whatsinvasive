@@ -18,6 +18,7 @@ public final class R {
     }
     public static final class color {
         public static final int black=0x7f050000;
+        public static final int dark_gray=0x7f050009;
         public static final int dim_gray=0x7f050008;
         public static final int green=0x7f050001;
         public static final int light_green=0x7f050002;
@@ -242,6 +243,8 @@ public final class R {
         public static final int feedback_tabs_rank=0x7f080025;
         public static final int feedback_tabs_statistics=0x7f080026;
         public static final int feedback_tabs_top=0x7f080027;
+        public static final int header_tag_info=0x7f0800c6;
+        public static final int header_tag_observation=0x7f0800c7;
         public static final int help_main_number1=0x7f080028;
         public static final int help_main_number2=0x7f080029;
         public static final int help_main_para1=0x7f08002a;

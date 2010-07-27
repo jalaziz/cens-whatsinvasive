@@ -197,4 +197,6 @@
 <string name="title_note">Obversation Note</string>
 <string name="note_title_prefix">Note for</string>
 <string name="invasive_mapping_failed">Failed to acquire location data.</string>
+<string name="header_tag_info">Information</string>
+<string name="header_tag_observation">Create an Observation</string>
 </resources>
