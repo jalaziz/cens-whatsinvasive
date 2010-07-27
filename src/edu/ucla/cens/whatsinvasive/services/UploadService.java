@@ -218,11 +218,22 @@ public class UploadService extends Service {
 
 			int status = response.getStatusLine().getStatusCode();
 			//Log.d(TAG, generateString(response.getEntity().getContent()));
-			Log.d(TAG, "Status Message: " + Integer.toString(status));
+			Log.d(TAG, "Status Message: " + status);
 			
 			if (status == HttpStatus.SC_OK) {
-				Log.d(TAG, "Sent file.");
-				return true;
+			    BufferedReader br = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+                String line = br.readLine();
+        
+                while(line != null) {
+                    if(line.equals("UPLOADED_OK")) {
+                        Log.d(TAG, "Sent file.");
+                        return true;
+                    }
+                    line = br.readLine();
+                }
+                
+				Log.d(TAG, "Upload Failed. Response was not from a WI server.");
+				return false;
 			} else {
 				InputStream is = response.getEntity().getContent();
 				
