@@ -27,11 +27,10 @@ import android.widget.Toast;
 import android.widget.TwoLineListItem;
 import android.widget.AdapterView.OnItemClickListener;
 import edu.ucla.cens.whatsinvasive.data.PhotoDatabase;
-import edu.ucla.cens.whatsinvasive.data.PhotoDatabase.OnChangeListener;
 import edu.ucla.cens.whatsinvasive.data.PhotoDatabase.PhotoDatabaseRow;
 import edu.ucla.cens.whatsinvasive.tools.Media;
 
-public class Queue extends ListActivity {
+public class Queue extends ListActivity implements PhotoDatabase.OnChangeListener {
 	private final int CONTEXT_SHOW_ON_MAP = 0;
 	private final int CONTEXT_VIEW = 1;
 	private final int CONTEXT_EDIT_NOTE = 2;
@@ -41,6 +40,7 @@ public class Queue extends ListActivity {
 	
 	private PhotoDatabase mDatabase;
 	private Cursor mCursor;
+	private Handler mHandler;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +49,8 @@ public class Queue extends ListActivity {
 		this.setContentView(R.layout.queue);
 		this.setTitle(R.string.title_queue);
         
+		mHandler = new Handler();
+		
         TextView extrat = new TextView(this);   
         extrat.setAutoLinkMask(Linkify.WEB_URLS);
         extrat.setText(getString(R.string.queue_message_full));
@@ -60,16 +62,6 @@ public class Queue extends ListActivity {
         getListView().setFooterDividersEnabled(true);
         
         mDatabase = new PhotoDatabase(this);
-        mDatabase.addChangeListener(new OnChangeListener() {
-            public void onDatabseChanged(PhotoDatabase source) {
-                new Handler().post(new Runnable() {
-                    public void run() {
-                        if(Queue.this.mCursor != null)
-                            Queue.this.mCursor.requery();
-                    }
-                });
-            }
-        });
 		
 		getListView().setOnItemClickListener(new OnItemClickListener(){
 
@@ -97,10 +89,21 @@ public class Queue extends ListActivity {
 				}				
 		});
 	}
+
+    public void onDatabseChanged(PhotoDatabase source) {
+        mHandler.post(new Runnable() {
+            public void run() {
+                if(Queue.this.mCursor != null)
+                    Queue.this.mCursor.requery();
+            }
+        });
+    }
 	
 	@Override
 	protected void onResume() {
 	    mDatabase.tryOpen();
+	    PhotoDatabase.addChangeListener(this);
+	    
         mCursor = mDatabase.getReadCursor();
 	    
         startManagingCursor(mCursor);
@@ -113,6 +116,7 @@ public class Queue extends ListActivity {
 	protected void onPause() {
 	    // We have to close the database here so that the other 
 	    // activities (e.g. ViewTag) can use the PhotoDatabase
+	    PhotoDatabase.removeChangeListener(this);
 	    mDatabase.close();
 	    
 	    super.onPause();

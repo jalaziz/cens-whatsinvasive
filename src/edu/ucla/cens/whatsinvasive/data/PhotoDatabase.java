@@ -24,9 +24,9 @@ public class PhotoDatabase {
 	public static final String KEY_PHOTO_AMOUNT = "photo_amount";
 	public static final String KEY_PHOTO_ROWID = "_id";
 	public static final String KEY_PHOTO_NOTE = "photo_note";
-	
-	private static boolean databaseOpen = false;
+
 	public static final String TAG = "photoDB";
+	private boolean databaseOpen = false;
 	private final DatabaseHelper dbHelper;
 	private SQLiteDatabase db;
 	 
@@ -62,7 +62,7 @@ public class PhotoDatabase {
         	public String noteValue;
     }
     
-    private final CopyOnWriteArrayList<OnChangeListener> m_changeListeners = new CopyOnWriteArrayList<OnChangeListener>();
+    private static final CopyOnWriteArrayList<OnChangeListener> m_changeListeners = new CopyOnWriteArrayList<OnChangeListener>();
     
     public interface OnChangeListener {
         public void onDatabseChanged(PhotoDatabase source);
@@ -94,28 +94,15 @@ public class PhotoDatabase {
 		dbHelper = new DatabaseHelper(mCtx);
 	}
 	
-	public synchronized PhotoDatabase open() throws SQLException {
-	    while (databaseOpen)
-        {
-            try
-            {
-                wait();
-            }
-            catch (InterruptedException e){}
-
-        }
-        
-        databaseOpen = true;
+	public synchronized void open() throws SQLException {
         db = dbHelper.getWritableDatabase();
-
-        return this;
+        databaseOpen = true;
 	}
 	
 	public synchronized void close()
 	{
 		dbHelper.close();
 		databaseOpen = false;
-		notify();
 	}
 	
 	public synchronized boolean tryOpen() {
@@ -318,15 +305,15 @@ public class PhotoDatabase {
         return result;
     }
 	
-	public void addChangeListener(OnChangeListener listener) {
+	public static void addChangeListener(OnChangeListener listener) {
 	    m_changeListeners.add(listener);
 	}
 	
-	public void removeChangeListener(OnChangeListener listener) {
+	public static void removeChangeListener(OnChangeListener listener) {
 	    m_changeListeners.remove(listener);
     }
 	
-	public void onChange() {
+	private void onChange() {
 	    Iterator<OnChangeListener> i = m_changeListeners.iterator();
 	    
 	    while(i.hasNext()) {
