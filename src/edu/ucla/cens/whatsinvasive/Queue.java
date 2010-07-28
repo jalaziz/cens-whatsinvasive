@@ -1,6 +1,10 @@
 package edu.ucla.cens.whatsinvasive;
 
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 import android.app.Activity;
 import android.app.ListActivity;
@@ -220,7 +224,21 @@ public class Queue extends ListActivity implements PhotoDatabase.OnChangeListene
 			view.getText1().setText((cursor.getCount() - cursor.getPosition()) +") "+ cursor.getString(indexTags));
 			view.getText1().setTextSize(16);
 			
-			String text = getString(R.string.tag_tagged_at) + " " + cursor.getString(indexTime);
+			String time = cursor.getString(indexTime);
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			df.setTimeZone(TimeZone.getTimeZone("UTC"));
+			
+			Date date = new Date(0);
+			
+			try {
+			    date = df.parse(time);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            
+            df.setTimeZone(TimeZone.getDefault());
+			
+			String text = getString(R.string.tag_tagged_at) + " " + df.format(date);
 			
 			if(!cursor.isNull(indexUploaded))
 				text += "\nUploaded "+ cursor.getString(indexUploaded);
