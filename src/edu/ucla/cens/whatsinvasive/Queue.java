@@ -14,7 +14,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.util.Linkify;
@@ -27,7 +26,6 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.TwoLineListItem;
 import android.widget.AdapterView.OnItemClickListener;
 import edu.ucla.cens.whatsinvasive.data.PhotoDatabase;
@@ -35,7 +33,6 @@ import edu.ucla.cens.whatsinvasive.data.PhotoDatabase.PhotoDatabaseRow;
 import edu.ucla.cens.whatsinvasive.tools.Media;
 
 public class Queue extends ListActivity implements PhotoDatabase.OnChangeListener {
-	private final int CONTEXT_SHOW_ON_MAP = 0;
 	private final int CONTEXT_VIEW = 1;
 	private final int CONTEXT_EDIT_NOTE = 2;
 	private final int CONTEXT_REMOVE = 3;
@@ -82,8 +79,7 @@ public class Queue extends ListActivity implements PhotoDatabase.OnChangeListene
 					AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 					TagData data = (TagData) info.targetView.getTag();
 					if(data != null){
-						menu.setHeaderTitle(getString(R.string.queue_actions));						
-						menu.add(0, CONTEXT_SHOW_ON_MAP, 0, getString(R.string.queue_show_map));
+						menu.setHeaderTitle(getString(R.string.queue_actions));
 						menu.add(0, CONTEXT_VIEW, 1, getString(R.string.queue_view));
 						if(data.uploaded == null) {
 						    menu.add(0, CONTEXT_EDIT_NOTE, 2, getString(R.string.queue_edit_note));
@@ -136,25 +132,12 @@ public class Queue extends ListActivity implements PhotoDatabase.OnChangeListene
 	    super.onStop();
 	}
 	
-	private void showOnMap(String lat, String lon){
-		if(lat != null && lon != null){
-			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:"+ lat +","+ lon)); 
-			Queue.this.startActivity(intent);
-		} else {
-			Toast.makeText(Queue.this, getString(R.string.queue_no_location), Toast.LENGTH_SHORT).show();
-		}
-	}
-	
 	@Override
 	public boolean onContextItemSelected(MenuItem item) { 
 		AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		TagData data = (TagData) menuInfo.targetView.getTag();
 		
 		switch (item.getItemId()) {
-			case CONTEXT_SHOW_ON_MAP:
-				showOnMap(data.lat, data.lon);
-				
-				break;
 			case CONTEXT_VIEW:
 				Intent intent = new Intent(this, ViewTag.class);
 				intent.putExtra("id", data.id);
