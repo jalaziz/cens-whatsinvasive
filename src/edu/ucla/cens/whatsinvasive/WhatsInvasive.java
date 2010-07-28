@@ -164,7 +164,12 @@ public class WhatsInvasive extends Activity implements Observer {
 		bindService(service, conn, BIND_AUTO_CREATE);
 
 		setupEvents();
-		//checkVersion();
+		
+		new Thread(new Runnable() {
+            public void run() {
+                checkVersion();
+            }
+        }).start();
 
 		// start the upload service to check if there is anything to upload
 		if(m_preferences.getBoolean("uploadServiceOn", true)){
@@ -182,104 +187,118 @@ public class WhatsInvasive extends Activity implements Observer {
 	}
   
 	private void checkVersion() {
-		String description[] = new String[4];
-		description[0] = getString(R.string.whatsinvasive_no_details_update);
-		final SharedPreferences preferences = this.getSharedPreferences(PREFERENCES_USER, Activity.MODE_PRIVATE);
-		preferences.edit().putString("version", getString(R.string.version)).commit();
-		preferences.edit().putString("version_date", getString(R.string.version_date)).commit();
-			
-		final int availableVersion = currentVersion(preferences.getString("version", null),preferences.getString("version_date", null),description);
-		final String returnedDescrip = new String(description[0]);
-		final String version = new String(description[1]);
-		final String version_date = new String(description[2]);
-		long park_id;
-		try{
-			park_id = Long.parseLong(description[3]);
-		}catch(NumberFormatException e){
-			park_id = -1;
-		}
-		final long area_id = park_id;
-		final String appUrl = getString(R.string.app_url);
+	    final SharedPreferences preferences = this.getSharedPreferences(
+                PREFERENCES_USER, Activity.MODE_PRIVATE);
+	    
+	    final String appUrl = getString(R.string.app_url);
+	    String results[] = new String[4];
+	    final long park_id;
+        
+        String description = getString(R.string.whatsinvasive_no_details_update);
+        String version = getString(R.string.version);
+        String version_date = getString(R.string.version_date);
 
-		if(availableVersion != NO_UPDATE_AVAILABLE) {
-			Log.d(TAG,"should update version");
+        final int availableVersion = currentVersion(version, version_date, results);
+        
+        description = results[0];
+        version = results[1];
+        version_date = results[2];
+        
+        long parsedParkId;
+        
+        try {
+            parsedParkId = Long.parseLong(results[3]);
+        } catch (NumberFormatException e) {
+            parsedParkId = -1;
+        }
+        
+        park_id = parsedParkId;
 
-			ad = new AlertDialog.Builder(this);
-			if(availableVersion == UPDATE_REQUIRED)
-				ad.setTitle(getString(R.string.msg_update_new_version_required));
-			else
-				ad.setTitle(getString(R.string.msg_update_new_version_available));
-			if(UNINSTALL_REQUIRED) {
-				ad.setMessage(getString(R.string.msg_update_please_uninstall) +
-						returnedDescrip + "\n");
-				ad.setPositiveButton(getString(R.string.msg_update_uninstall), new DialogInterface.OnClickListener() { 
-					public void onClick(DialogInterface dlg, int sumthin) { 
- 
-						Uri packageURI = Uri.parse("package:edu.ucla.cens.whatsinvasive");
-						Intent uninstallIntent = new Intent(Intent.ACTION_DELETE, packageURI);
-						startActivity(uninstallIntent);
-					} 
-				});
-			} else {
-				ad.setMessage(getString(R.string.msg_update_available) +
-						returnedDescrip + "\n");
-				ad.setPositiveButton(getString(R.string.update_button_download), new DialogInterface.OnClickListener() { 
-					public void onClick(DialogInterface dlg, int sumthin) { 
+        if (availableVersion != NO_UPDATE_AVAILABLE) {
+            Log.d(TAG, "should update version");
 
-						startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(appUrl))); 
-
-						if(availableVersion == UPDATE_REQUIRED)
-							WhatsInvasive.this.finish();		
-					} 
-				});
-			}
-			if(availableVersion == UPDATE_REQUIRED){
-				ad.setNegativeButton(getString(R.string.update_button_later), new DialogInterface.OnClickListener() { 
-					public void onClick(DialogInterface dlg, int sumthin) { 
-						WhatsInvasive.this.finish();
-					} 
-				});
-			}
-			else if(area_id != -1){ // if area_id was specified in the update message
-				ad.setNegativeButton(getString(R.string.update_button_later), new DialogInterface.OnClickListener() { 
-					public void onClick(DialogInterface dlg, int sumthin) { 
-						preferences.edit().putString("version", version).commit();
-						preferences.edit().putString("version_date", version_date).commit();
-					} 
-				});
-				ad.setPositiveButton(getString(R.string.update_button_download_list), new DialogInterface.OnClickListener() { 
-					public void onClick(DialogInterface dlg, int sumthin) { 
-						showToast(getString(R.string.attempting_download_new_invasive), Toast.LENGTH_SHORT);		
-						preferences.edit().putString("version", version).commit();
-						preferences.edit().putString("version_date", version_date).commit();
-						TagUpdateThread thread = new TagUpdateThread(WhatsInvasive.this, area_id);
-						thread.getObservable().addObserver(WhatsInvasive.this);
-						thread.start();												
-					} 
-				});
-			}
-			else { // if area_id was not specified in the update message just update the app
-				ad.setNegativeButton(getString(R.string.update_button_later), new DialogInterface.OnClickListener() { 
-					public void onClick(DialogInterface dlg, int sumthin) { 
-						preferences.edit().putString("version", version).commit();
-						preferences.edit().putString("version_date", version_date).commit();
-					} 
-				});
-				ad.setPositiveButton(getString(R.string.update_button_download), new DialogInterface.OnClickListener() { 
-					public void onClick(DialogInterface dlg, int sumthin) { 
-						showToast(getString(R.string.attempting_download_new_invasive), Toast.LENGTH_SHORT);		
-						preferences.edit().putString("version", version).commit();
-						preferences.edit().putString("version_date", version_date).commit();
-						startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(appUrl))); 
-						
-						WhatsInvasive.this.finish();											
-					} 
-				});
-			}
-
-			ad.show(); 
-
-		}
+            ad = new AlertDialog.Builder(this);
+            
+            if (availableVersion == UPDATE_REQUIRED)
+                ad.setTitle(getString(R.string.msg_update_new_version_required));
+            else
+                ad.setTitle(getString(R.string.msg_update_new_version_available));
+            
+            ad.setMessage(getString(R.string.msg_update_available)
+                    + description + "\n");
+            
+            if (availableVersion == UPDATE_REQUIRED) {
+                ad.setNegativeButton(
+                        getString(R.string.update_button_later),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dlg, int which) {
+                                WhatsInvasive.this.finish();
+                            }
+                        });
+                
+                if (UNINSTALL_REQUIRED) {
+                    ad.setMessage(getString(R.string.msg_update_please_uninstall)
+                            + description + "\n");
+                    ad.setPositiveButton(
+                            getString(R.string.msg_update_uninstall),
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dlg, int which) {
+                                    Uri packageURI = Uri.parse("package:edu.ucla.cens.whatsinvasive");
+                                    Intent uninstallIntent = new Intent(Intent.ACTION_DELETE, packageURI);
+                                    startActivity(uninstallIntent);
+                                    WhatsInvasive.this.finish();
+                                }
+                            });
+                } else {
+                    ad.setPositiveButton(
+                            getString(R.string.update_button_download),
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dlg, int which) {
+                                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(appUrl)));
+                                    WhatsInvasive.this.finish();
+                                }
+                            });
+                }
+            } else if (park_id != -1) { // if area_id was specified in the
+                                        // update message
+                ad.setNegativeButton(
+                        getString(R.string.update_button_later),
+                        null);
+                ad.setPositiveButton(
+                        getString(R.string.update_button_download_list),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dlg, int sumthin) {
+                                //TODO: Update this to use a blocking dialog                   
+                                showToast(
+                                        getString(R.string.attempting_download_new_invasive),
+                                        Toast.LENGTH_SHORT);
+                                
+                                TagUpdateThread thread = new TagUpdateThread(WhatsInvasive.this, park_id);
+                                thread.getObservable().addObserver(WhatsInvasive.this);
+                                thread.start();
+                            }
+                        });
+            } else { // if area_id was not specified in the update message just
+                     // update the app
+                ad.setNegativeButton(
+                        getString(R.string.update_button_later),
+                        null);
+                ad.setPositiveButton(
+                        getString(R.string.update_button_download),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dlg, int sumthin) {
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(appUrl)));
+                                WhatsInvasive.this.finish();
+                            }
+                        });
+            }
+            
+            handler.post(new Runnable() {
+                public void run() {
+                    ad.show();
+                }
+            }); 
+        }
 	}
 
 	private int currentVersion(String version, String date, String[] description)
