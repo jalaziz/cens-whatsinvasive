@@ -382,8 +382,10 @@ public class WhatsInvasive extends Activity implements Observer {
         Button captureWeed = (Button) this.findViewById(R.id.ButtonTagWeed);
         Button captureBug = (Button)this.findViewById(R.id.ButtonTagBug);
  
-        captureWeed.setEnabled(availablePlantTags != 0);
-        captureBug.setEnabled(availableAnimalTags != 0);
+        captureWeed.setEnabled(availablePlantTags > 0);
+        captureWeed.setText((availablePlantTags > 0) ? R.string.main_button_mapweed : R.string.main_button_noweeds);
+        captureBug.setEnabled(availableAnimalTags > 0);
+        captureBug.setText((availableAnimalTags > 0) ? R.string.main_button_mapbug : R.string.main_button_nobugs);
 
         // Set park caption
         TextView textView = (TextView) this.findViewById(R.id.TextView01); 
