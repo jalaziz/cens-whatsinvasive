@@ -561,11 +561,10 @@ public class TagLocation extends ListActivity implements LocationListener {
         String filename = extras.getString("filename");
         
         Intent result = new Intent();
-        result.putExtra("Tag", tag);
-        result.putExtra("amount", amount);
-        result.putExtra("filename", filename);
-        result.putExtra("note", note);
-        result.putExtra("Type", this.tagType);
+        result.putExtras(extras);
+        
+        // Erase the extras for the next observation
+        extras.clear();
 
         Log.d(TAG, "tag = " + tag + ", amount = " + amount);
 
@@ -592,7 +591,8 @@ public class TagLocation extends ListActivity implements LocationListener {
                     .getInt("amountId", mRadioGroup.getCheckedRadioButtonId()));
             final String amounttext = radio_amount.getTag().toString();
 
-            // tag this weed
+            // Tag this invasive
+            TagLocation.this.getIntent().putExtra("Type", tagType);
             TagLocation.this.getIntent().putExtra("Tag", tagtext);
             TagLocation.this.getIntent().putExtra("amount", amounttext);
             
