@@ -84,7 +84,7 @@
 <string name="help_tagging_para3">Select if you want to include a photo or add notes to your observation.</string>
 <string name="help_tagging_para4">We recommend that you include at least one photo of each new invasive species you are recording.</string>
 <string name="help_tagging_para5">Then touch the name of the invasive to make your observation!</string>
-<string name="help_tagging_title">Tagging Help</string>
+<string name="help_tagging_title">Observations Help</string>
 <string name="location_setting_auto">(Auto)</string>
 <string name="location_setting_manual">(Manual)</string>
 <string name="locationservice_no_park">Unable to download invasive list. Park does not exist.</string>
