@@ -564,7 +564,7 @@ public class TagLocation extends ListActivity implements LocationListener {
         result.putExtras(extras);
         
         // Erase the extras for the next observation
-        extras.clear();
+        this.getIntent().replaceExtras((Bundle)null);
 
         Log.d(TAG, "tag = " + tag + ", amount = " + amount);
 
