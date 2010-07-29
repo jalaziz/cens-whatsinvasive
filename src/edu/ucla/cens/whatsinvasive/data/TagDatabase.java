@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.Vector;
 
+import org.apache.commons.lang.StringUtils;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -136,16 +138,18 @@ public class TagDatabase {
 	
 	public TagRow getTag(int id)
 	{		
-		Cursor c = db.query(DATABASE_TAGS_TABLE, new String[] {KEY_ID, KEY_TITLE, KEY_IMAGE_URL, KEY_TEXT, KEY_FLAGS, KEY_TYPE_ID}, KEY_ID+"=?", new String[]{String.valueOf(id)}, null, null, null);
+		Cursor c = db.query(DATABASE_TAGS_TABLE, new String[] {KEY_ID, KEY_TITLE, KEY_SCIENCE_NAME, KEY_COMMON_NAMES, KEY_IMAGE_URL, KEY_TEXT, KEY_FLAGS, KEY_TYPE_ID}, KEY_ID+"=?", new String[]{String.valueOf(id)}, null, null, null);
 		TagRow ret = new TagRow();
 
 		if (c.moveToFirst()) {		
 			ret.id = c.getLong(0);
 			ret.title = c.getString(1);
-			ret.imagePath = c.getString(2);
-			ret.text = c.getString(3);
-			ret.flags = c.getString(4);
-			ret.type = TagType.lookup(c.getInt(5));
+			ret.scienceName = c.getString(2);
+			ret.commonNames = StringUtils.split(c.getString(3), ',');
+			ret.imagePath = c.getString(4);
+			ret.text = c.getString(5);
+			ret.flags = c.getString(6);
+			ret.type = TagType.lookup(c.getInt(7));
 		}
 		
 		c.close();
@@ -157,13 +161,15 @@ public class TagDatabase {
 	public long insertTag(TagRow row)
 	{		
 		ContentValues vals = new ContentValues();
-		vals.put(TagDatabase.KEY_TITLE, row.title);
-		vals.put(TagDatabase.KEY_IMAGE_URL, row.imagePath);
-		vals.put(TagDatabase.KEY_TEXT, row.text);
-		vals.put(TagDatabase.KEY_AREA_ID, row.areaId);
-		vals.put(TagDatabase.KEY_ORDER, row.order);
-		vals.put(TagDatabase.KEY_FLAGS, row.flags);
-		vals.put(TagDatabase.KEY_TYPE_ID, row.type.value());
+		vals.put(KEY_TITLE, row.title);
+		vals.put(KEY_IMAGE_URL, row.imagePath);
+		vals.put(KEY_TEXT, row.text);
+		vals.put(KEY_SCIENCE_NAME, row.scienceName);
+		vals.put(KEY_COMMON_NAMES, StringUtils.join(row.commonNames, ','));
+		vals.put(KEY_AREA_ID, row.areaId);
+		vals.put(KEY_ORDER, row.order);
+		vals.put(KEY_FLAGS, row.flags);
+		vals.put(KEY_TYPE_ID, row.type.value());
 		
 		long rowid = db.insert(DATABASE_TAGS_TABLE, null, vals);
 		return rowid;
@@ -231,7 +237,7 @@ public class TagDatabase {
         }
 
 		SQLiteDatabase db = dbHelper.getReadableDatabase();		 
-		return db.query(DATABASE_TAGS_TABLE, new String[]{KEY_ID, KEY_TITLE, KEY_IMAGE_URL, KEY_TEXT, KEY_FLAGS}, where, whereargs, null, null, KEY_ORDER);
+		return db.query(DATABASE_TAGS_TABLE, new String[]{KEY_ID, KEY_TITLE, KEY_SCIENCE_NAME, KEY_COMMON_NAMES, KEY_IMAGE_URL, KEY_TEXT, KEY_FLAGS}, where, whereargs, null, null, KEY_ORDER);
 	}
 	
 	public long insertArea(AreaRow row)
