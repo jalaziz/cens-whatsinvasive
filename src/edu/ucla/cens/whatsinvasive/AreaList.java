@@ -9,7 +9,6 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
@@ -19,8 +18,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -34,8 +31,7 @@ import edu.ucla.cens.whatsinvasive.services.LocationService.TagUpdateThread;
 import edu.ucla.cens.whatsinvasive.tools.UpdateThread.UpdateData;
 
 public class AreaList extends Activity implements Observer {
-	private final int MENU_MAP = 0;
-	
+
 	private final int DIALOG_DOWNLOAD_AREAS = 0;
 	private final int DIALOG_DOWNLOAD_TAGS = 1;
 	private final int DIALOG_TIMEOUT_AREA = 2;
@@ -56,8 +52,6 @@ public class AreaList extends Activity implements Observer {
 	private static final String TAG = "AreaList";
 
 	protected static final int RESULT_TAGS_SAME = 22;
-	
-	private final int ACTIVITY_AREA_MAP = 0;
 	
 	private final int VISIBLE_PARKS = 10;
 	
@@ -168,30 +162,6 @@ public class AreaList extends Activity implements Observer {
 	}
 	
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
-		menu.add(0, MENU_MAP, 0, getString(R.string.menu_show_map)).setIcon(android.R.drawable.ic_menu_mapmode);
-
-		return super.onCreateOptionsMenu(menu);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
-		Intent intent= null;
-		
-		switch(item.getItemId()){
-			case MENU_MAP:
-				intent = new Intent(AreaList.this, AreaMap.class);
-				AreaList.this.startActivityForResult(intent, ACTIVITY_AREA_MAP);
-				
-				break;
-		}
-		
-		return super.onOptionsItemSelected(item);
-	}
-	
-	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)
     {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -211,26 +181,6 @@ public class AreaList extends Activity implements Observer {
         
         return false;
     }
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data)
-	{
-		switch(requestCode){
-			case ACTIVITY_AREA_MAP:
-				if(resultCode==AreaMap.RESULT_AREA_SELECTED){
-					Message msg = new Message();
-					msg.what = MESSAGE_DOWNLOAD_TAGS;
-					if(data != null)
-						msg.setData(data.getExtras());
-					
-					AreaList.this.handler.sendMessage(msg);
-				}
-				
-				break; 
-		}
-		
-		super.onActivityResult(requestCode, resultCode, data);
-	}
 
 	@Override
 	protected Dialog onCreateDialog(int id)
