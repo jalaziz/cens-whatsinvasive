@@ -18,6 +18,8 @@ import edu.ucla.cens.whatsinvasive.TagType;
 public class TagDatabase {
 	public static final String KEY_ID = "_id";
 	public static final String KEY_TITLE = "title";
+	public static final String KEY_SCIENCE_NAME = "science_name";
+	public static final String KEY_COMMON_NAMES = "common_names";
 	public static final String KEY_IMAGE_URL = "imageurl";
 	public static final String KEY_TEXT = "text";
 	public static final String KEY_AREA_ID = "area";
@@ -33,7 +35,7 @@ public class TagDatabase {
 	private static final String DATABASE_TAGS_TABLE = "tags";
 	private static final String DATABASE_AREAS_TABLE = "areas";
 	
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 3;
 	
 	private static boolean databaseOpen = false;
 	private static Object dbLock = new Object();
@@ -44,6 +46,8 @@ public class TagDatabase {
 	
 	private static final String DATABASE_TAGS_CREATE = "create table "+ DATABASE_TAGS_TABLE +" ("+ KEY_ID +" integer primary key autoincrement, "
 		+ KEY_TITLE +" TEXT NOT NULL,"
+		+ KEY_SCIENCE_NAME +" TEXT,"
+		+ KEY_COMMON_NAMES +" TEXT,"
 		+ KEY_IMAGE_URL +" TEXT,"
 		+ KEY_TEXT +" TEXT,"
 		+ KEY_AREA_ID +" INTEGER,"
@@ -61,23 +65,25 @@ public class TagDatabase {
 		+ ");";
 	
 	public static class TagRow {
-    	public long id = -1;
-    	public String title;
-    	public String imagePath;
-    	public String text;
-    	public long areaId;
-    	public int order;
-    	public String flags;
-    	public TagType type;
+        	public long id = -1;
+        	public String title;
+        	public String scienceName;
+        	public String[] commonNames;
+        	public String imagePath;
+        	public String text;
+        	public long areaId;
+        	public int order;
+        	public String flags;
+        	public TagType type;
     }
 	
 	public static class AreaRow {
 		public long id = -1;
-    	public String title;
-    	public double latitude;
-    	public double longitude;
-    	public float distance;
-    	public String updated;
+        	public String title;
+        	public double latitude;
+        	public double longitude;
+        	public float distance;
+        	public String updated;
 	}
 	
 	public TagDatabase(Context context)
@@ -335,10 +341,9 @@ public class TagDatabase {
 		    if(oldVersion < 2)
 		    {
 		        db.execSQL("alter table " + DATABASE_TAGS_TABLE + " rename to " + DATABASE_TAGS_TABLE + "_old");
-		        db.execSQL("drop table " + DATABASE_TAGS_TABLE);
 		        db.execSQL(DATABASE_TAGS_CREATE);
 		        
-		        Cursor cursor = db.query(DATABASE_TAGS_TABLE + "_old", new String[]{KEY_ID, KEY_TITLE, KEY_IMAGE_URL, KEY_TEXT, KEY_AREA_ID, KEY_ORDER, "type"}, null, null, null, null, KEY_ORDER);
+		        Cursor cursor = db.query(DATABASE_TAGS_TABLE + "_old", new String[]{KEY_ID, KEY_TITLE, KEY_IMAGE_URL, KEY_TEXT, KEY_FLAGS, KEY_AREA_ID, KEY_ORDER, "type"}, null, null, null, null, KEY_ORDER);
 		        
 		        while (cursor.moveToNext()) {		            
 		            ContentValues vals = new ContentValues();
@@ -356,6 +361,33 @@ public class TagDatabase {
 		        cursor.close();
 		        
 		        db.execSQL("drop table " + DATABASE_TAGS_TABLE + "_old");
+		    }
+		    
+		    if(oldVersion < 3)
+		    {
+		        db.execSQL("alter table " + DATABASE_TAGS_TABLE + " rename to " + DATABASE_TAGS_TABLE + "_old");
+                db.execSQL(DATABASE_TAGS_CREATE);
+                
+                Cursor cursor = db.query(DATABASE_TAGS_TABLE + "_old", new String[]{KEY_ID, KEY_TITLE, KEY_IMAGE_URL, KEY_TEXT, KEY_FLAGS, KEY_AREA_ID, KEY_ORDER, KEY_TYPE_ID}, null, null, null, null, KEY_ORDER);
+                
+                while (cursor.moveToNext()) {                   
+                    ContentValues vals = new ContentValues();
+                    vals.put(TagDatabase.KEY_TITLE, cursor.getString(1));
+                    vals.put(TagDatabase.KEY_SCIENCE_NAME, (String)null);
+                    vals.put(TagDatabase.KEY_COMMON_NAMES, (String)null);
+                    vals.put(TagDatabase.KEY_IMAGE_URL, cursor.getString(2));
+                    vals.put(TagDatabase.KEY_TEXT, cursor.getString(3));
+                    vals.put(TagDatabase.KEY_FLAGS, cursor.getString(4));
+                    vals.put(TagDatabase.KEY_AREA_ID, cursor.getLong(5));
+                    vals.put(TagDatabase.KEY_ORDER, cursor.getInt(6));
+                    vals.put(TagDatabase.KEY_TYPE_ID, cursor.getInt(7));
+                    
+                    db.insert(DATABASE_TAGS_TABLE, null, vals);
+                }
+                
+                cursor.close();
+                
+                db.execSQL("drop table " + DATABASE_TAGS_TABLE + "_old");
 		    }
 		}		
 	}
