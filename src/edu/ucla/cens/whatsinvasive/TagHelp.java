@@ -3,12 +3,13 @@ package edu.ucla.cens.whatsinvasive;
 import java.io.File;
 import java.util.Vector;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.GestureDetector;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -40,25 +41,6 @@ public class TagHelp extends Activity {
     private TagDatabase m_db;
     private int m_id;
     private Vector<Integer> m_ids;
-	
-//	@Override
-//	public boolean onTouchEvent(MotionEvent event) {
-//        	if (m_gestureDetector.onTouchEvent(event))
-//        	return true;
-//        	else
-//        	return false;
-//	}
-
-    @Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)
-    {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-        	Intent intent = new Intent(this,TagLocation.class);
-			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(intent);
-        }
-        return false;
-    }
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -161,10 +143,23 @@ public class TagHelp extends Activity {
         
         m_db.close();
         
-        TextView title = (TextView) v.findViewById(R.id.TextView01);
+        TextView title = (TextView) v.findViewById(R.id.title);
         title.setText(tag.title);
         
-        TextView text = (TextView) v.findViewById(R.id.TextView02);
+        TextView scienceName = (TextView) v.findViewById(R.id.science_name);
+        scienceName.setText(tag.scienceName);
+        
+        TextView commonNames = (TextView) v.findViewById(R.id.common_names);
+        if(tag.commonNames != null && tag.commonNames.length > 1) {
+            String names = StringUtils.join(ArrayUtils.remove(tag.commonNames, 0), ',');
+            
+            commonNames.setVisibility(View.VISIBLE);
+            commonNames.setText(getString(R.string.common_names_prefix) + " " + names);
+        } else {
+            commonNames.setVisibility(View.GONE);
+        }
+        
+        TextView text = (TextView) v.findViewById(R.id.description);
         if(tag.text!=null){
             text.setText(tag.text);
             text.setVisibility(TextView.VISIBLE);
@@ -240,16 +235,18 @@ public class TagHelp extends Activity {
 			        m_flipper.setInAnimation(m_slideLeftIn);
                     m_flipper.setOutAnimation(m_slideLeftOut); 
                     m_flipper.showNext();
+                    return true;
 			    //left to right swipe
 			    } else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
 			        m_flipper.setInAnimation(m_slideRightIn);
                     m_flipper.setOutAnimation(m_slideRightOut); 
                     m_flipper.showPrevious();
+                    return true;
 			    } 
 			} 
 			catch (Exception e) { /* nothing */ }
 
-			return true;
+			return false;
 		}
 	}
 }
