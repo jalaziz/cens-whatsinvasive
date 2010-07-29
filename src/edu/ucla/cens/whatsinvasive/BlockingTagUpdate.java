@@ -16,21 +16,14 @@ public class BlockingTagUpdate extends Activity implements Observer {
 	private static final int DIALOG_DOWNLOAD_TAGS = 3231;
 	private TagUpdateThread thread;
 	
-
-
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//WindowManager.LayoutParams wlp = getWindow().getAttributes();
-		//getWindow().addContentView(R.layout.blockingtagupdate,wlp);
-		//getWindow().setContentView(R.layout.blockingtagupdate);
 		setContentView(R.layout.blockingtagupdate); 		
-		//BlockingTagUpdate.this.showDialog(DIALOG_DOWNLOAD_TAGS);	
+
 		thread = new TagUpdateThread(BlockingTagUpdate.this, LocationService.getParkId(BlockingTagUpdate.this));
 		thread.getObservable().addObserver(BlockingTagUpdate.this);	
-		thread.run();
-		
+		thread.start();
 	}
 
 	private final Handler handler = new Handler() {
@@ -46,8 +39,7 @@ public class BlockingTagUpdate extends Activity implements Observer {
 		}
 	};
 	
-	public void update(Observable observable, Object data) {
-		// TODO Auto-generated method stub		
+	public void update(Observable observable, Object data) {	
 		UpdateData update = (UpdateData) data;
 		if(update.source.equals("TagUpdateThread")){
 			if(update.allDone){

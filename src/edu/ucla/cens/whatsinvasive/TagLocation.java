@@ -445,9 +445,7 @@ public class TagLocation extends ListActivity implements LocationListener {
                                     preferences.edit().putBoolean(
                                             "locationServiceOn", false)
                                             .commit();
-                                    Intent intent = new Intent(activity
-                                            .getBaseContext(),
-                                            BlockingTagUpdate.class);
+                                    Intent intent = new Intent(activity, BlockingTagUpdate.class);
                                     activity.startActivityForResult(intent,
                                             WhatsInvasive.CHANGE_GPS_SETTINGS);
 
