@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/tab" android:layout_width="fill_parent"
+	android:layout_height="fill_parent" android:background="@color/white">
+	<LinearLayout android:id="@+id/LinearLayout01"
+		android:orientation="vertical" android:layout_height="wrap_content"
+		android:layout_width="fill_parent" android:background="@color/transparent_black"
+		android:layout_alignParentTop="true">
+		<TextView android:id="@+id/title"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:padding="10px" android:textAppearance="?android:attr/textAppearanceLarge"
+			android:text="@string/feedback_tabs_no_results"></TextView>
+		<LinearLayout android:id="@+id/LinearLayout02"
+			android:paddingLeft="10px" android:paddingRight="10px"
+			android:paddingBottom="10px" android:layout_height="wrap_content"
+			android:layout_width="fill_parent" android:layout_weight="100">
+			<LinearLayout android:id="@+id/LinearLayout03"
+				android:layout_height="wrap_content" android:layout_width="wrap_content"
+				android:layout_weight="60" android:orientation="vertical">
+				<TextView android:id="@+id/pests"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:textAppearance="?android:attr/textAppearanceMedium"
+					android:text="@string/feedback_tabs_invasives"></TextView>
+				<TextView android:id="@+id/photos"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:text="@string/feedback_tabs_photos" android:textAppearance="?android:attr/textAppearanceMedium"></TextView>
+			</LinearLayout>
+			<TextView android:id="@+id/rank" android:layout_width="wrap_content"
+				android:text="" android:layout_height="wrap_content" android:visibility="gone"
+				android:layout_weight="50" android:textAppearance="?android:attr/textAppearanceMedium"></TextView>
+			<TextView android:id="@+id/topusers" android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="" android:visibility="gone"
+				android:layout_weight="40" android:textSize="14px"></TextView>
+		</LinearLayout>
+	</LinearLayout>
+	<ImageView android:id="@+id/chart"
+		android:layout_width="fill_parent" android:layout_below="@+id/LinearLayout01"
+		android:layout_height="fill_parent" android:layout_marginLeft="10px"
+		android:layout_marginRight="10px"></ImageView>
+</RelativeLayout>

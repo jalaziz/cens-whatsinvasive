@@ -1,105 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical"
-	android:layout_width="fill_parent"
+<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@android:id/tabhost" android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
-	<TabHost android:id="@+id/tabhost"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent">
-		<TabWidget android:id="@android:id/tabs"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-		/>
-		<FrameLayout android:id="@android:id/tabcontent"
-			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"			
-			android:paddingTop="62px">
-			<RelativeLayout android:id="@+id/layout1"
-			android:layout_width="fill_parent"			
-			android:layout_height="fill_parent"
-			android:background="@color/white">
-		<LinearLayout android:id="@+id/LinearLayout01"
-			android:orientation="vertical" android:layout_height="wrap_content"
-			android:layout_width="fill_parent" android:background="@color/transparent_black"
-			android:layout_alignParentTop="true">
-			<TextView android:id="@+id/TextViewTitle"
-				android:layout_width="wrap_content" android:layout_height="wrap_content"
-				android:padding="10px"
-				android:textAppearance="?android:attr/textAppearanceLarge" android:text="@string/feedback_tabs_no_results"></TextView>
-			<LinearLayout android:id="@+id/LinearLayout02"
-				android:paddingLeft="10px" android:paddingRight="10px"
-				android:paddingBottom="10px" android:layout_height="wrap_content"
-				android:layout_width="fill_parent" android:layout_weight="100">
-				<LinearLayout android:id="@+id/LinearLayout01"
-					android:layout_height="wrap_content" android:layout_width="wrap_content"
-					android:layout_weight="60" android:orientation="vertical">
-					<TextView android:id="@+id/TextView01"
-						android:layout_width="wrap_content" android:layout_height="wrap_content"
-						android:textAppearance="?android:attr/textAppearanceMedium" android:text="@string/feedback_tabs_invasives"></TextView>
-					<TextView android:id="@+id/TextView02"
-						android:layout_width="wrap_content" android:layout_height="wrap_content"
-						android:text="@string/feedback_tabs_photos" 
-						android:textAppearance="?android:attr/textAppearanceMedium"></TextView>
-				</LinearLayout>
-				<TextView android:id="@+id/myrank2" android:layout_width="wrap_content"
-								android:text=""
-					android:layout_height="wrap_content" 
-					android:layout_weight="50" 
-					android:textAppearance="?android:attr/textAppearanceMedium"></TextView>
-				<TextView android:id="@+id/TextView03" android:layout_width="wrap_content"
-					android:layout_height="wrap_content" android:text=""
-					android:layout_weight="40" 
-					android:textSize="14px"></TextView>
-			</LinearLayout>
-		</LinearLayout>
-		<ImageView android:id="@+id/ImageView01"
-			android:layout_width="fill_parent" android:layout_below="@+id/LinearLayout01"
-			android:layout_height="fill_parent" android:layout_marginLeft="10px" android:layout_marginRight="10px"></ImageView>
-	</RelativeLayout>
-	
-	<RelativeLayout android:id="@+id/layout2"
-		android:layout_width="fill_parent" 
-		android:layout_height="fill_parent"
-		android:background="@color/white">
-		<com.google.android.maps.MapView
-			android:id="@+id/MapView01" android:layout_width="fill_parent"
-			android:layout_height="fill_parent" android:clickable="true"
-			android:apiKey="0EdfpwSqYgf9nrnjcJvqfg-QaC6KaBul4gRA-yg" />
-			<!-- debug key: 0ueJVUhsFY5NmUamWhtGZ8fxHuTtpHkbMzEB9bw -->
-			<!-- debug key (cens): 0ueJVUhsFY5Nk3WfsKSzLc7yrT8QEqtKFg4B4yg -->
-			<!-- cert key:  0ueJVUhsFY5Nms5hu9a52OPe24PXN6dp6WgE2fw -->
-		<LinearLayout android:id="@+id/LinearLayout01"
-			android:layout_height="wrap_content" android:layout_width="fill_parent"
-			android:orientation="vertical" android:background="@color/transparent_black"
-			android:layout_alignParentTop="true">
-			<TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-				android:padding="10px"
-				android:textAppearance="?android:attr/textAppearanceLarge" android:id="@+id/TextViewTitle2" android:text="No Results Found"></TextView>
-			<LinearLayout android:id="@+id/LinearLayout02"
-				android:paddingLeft="10px" android:paddingRight="10px"
-				android:paddingBottom="10px" android:layout_height="wrap_content"
-				android:layout_width="fill_parent" android:layout_weight="100">
-				<LinearLayout android:id="@+id/LinearLayout01"
-					android:layout_height="wrap_content" android:layout_width="wrap_content"
-					android:layout_weight="50" android:orientation="vertical">
-					<TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-						android:textAppearance="?android:attr/textAppearanceMedium" android:id="@+id/mypests" android:text="@string/feedback_tabs_invasives"></TextView>
-					<TextView android:id="@+id/myphotos"
-						android:layout_width="wrap_content" android:layout_height="wrap_content"
-						android:text="@string/feedback_tabs_photos" 
-						android:textAppearance="?android:attr/textAppearanceMedium"></TextView>
-				</LinearLayout>
-				<TextView android:id="@+id/myrank" android:layout_width="wrap_content"
-					android:layout_height="wrap_content" android:text="@string/feedback_tabs_rank"
-					android:layout_weight="50" 
-					android:textAppearance="?android:attr/textAppearanceMedium"></TextView>
-					<TextView android:id="@+id/topusers1" android:layout_width="wrap_content"
-					android:layout_height="wrap_content" android:text=""
-					android:layout_weight="40" 
-					android:textSize="14px"></TextView>
-			</LinearLayout>
-		</LinearLayout>
-	</RelativeLayout>
-		</FrameLayout>
-	</TabHost>
-</LinearLayout>
+	<TabWidget android:id="@android:id/tabs"
+		android:layout_width="fill_parent" android:layout_height="wrap_content" />
+	<FrameLayout android:id="@android:id/tabcontent"
+		android:layout_width="fill_parent" android:layout_height="fill_parent"
+		android:paddingTop="62px">
+		<include android:id="@+id/personal" layout="@layout/feedback_tab" />
+  		<include android:id="@+id/global" layout="@layout/feedback_tab" /> 
+	</FrameLayout>
+</TabHost>

@@ -28,18 +28,18 @@
 <string name="empty_queue_text">\nTo edit or delete your previous observations, please visit us at our webpage:</string>
 <string name="empty_queue_text2">http://whatsinvasive.com</string>
 <string name="empty_queue_text3">Thanks!</string>
-<string name="feedback_tabs_all">All </string>
+<string name="feedback_tabs_all">All</string>
 <string name="feedback_tabs_downloading">Downloading My What\'s Invasive statistics.</string>
-<string name="feedback_tabs_latitude">Latitude: </string>
-<string name="feedback_tabs_longitude">Longitude: </string>
-<string name="feedback_tabs_my">My </string>
+<string name="feedback_tabs_latitude">Latitude:</string>
+<string name="feedback_tabs_longitude">Longitude:</string>
+<string name="feedback_tabs_my">My</string>
 <string name="feedback_tabs_no_results">No Results Found</string>
-<string name="feedback_tabs_park_id">Park ID: </string>
-<string name="feedback_tabs_invasives">Invasives: </string>
-<string name="feedback_tabs_photos">Photos: </string>
-<string name="feedback_tabs_rank">Rank: </string>
-<string name="feedback_tabs_statistics"> Statistics</string>
-<string name="feedback_tabs_top">Top collectors:\n</string>
+<string name="feedback_tabs_park_id">Park ID:</string>
+<string name="feedback_tabs_invasives">Invasives:</string>
+<string name="feedback_tabs_photos">Photos:</string>
+<string name="feedback_tabs_rank">Rank:</string>
+<string name="feedback_tabs_statistics">Statistics</string>
+<string name="feedback_tabs_top">Top collectors:</string>
 <string name="help_main_number1">(1)</string>
 <string name="help_main_number2">(2)</string>
 <string name="help_main_para1">The \&quot;Map a Weed!\&quot; or \&quot;Map a Pest!\&quot; buttons are the main functions.</string>
@@ -205,4 +205,8 @@
 <string name="out_of_memory_title">Out of Memory!</string>
 <string name="out_of_memory_photo_msg">Please try retaking your photo at a lower resolution to aviod this error.</string>
 <string name="out_of_memory_photo_retake">Retake Photo</string>
+<string name="feedback_tabs_personal">My Stats</string>
+<string name="feedback_tabs_global">Global Stats</string>
+<string name="feedback_fail">Failed to download results.\n\nMake sure you have network coverage before trying again.</string>
+<string name="feedback_timeout">No response</string>
 </resources>

@@ -40,7 +40,7 @@
 		
 		
 		<activity android:name="AreaList" android:screenOrientation="portrait"></activity>
-		<activity android:name="AreaMap" android:screenOrientation="portrait"></activity>
+		
 		
 		<service android:name="edu.ucla.cens.whatsinvasive.services.UploadService"></service>
 		<service android:name="edu.ucla.cens.whatsinvasive.services.LocationService"></service>
