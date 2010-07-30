@@ -202,4 +202,7 @@
 <string name="header_tag_info">Information</string>
 <string name="header_tag_observation">Create an Observation</string>
 <string name="common_names_prefix">Other common names:</string>
+<string name="out_of_memory_title">Out of Memory!</string>
+<string name="out_of_memory_photo_msg">Please try retaking your photo at a lower resolution to aviod this error.</string>
+<string name="out_of_memory_photo_retake">Retake Photo</string>
 </resources>

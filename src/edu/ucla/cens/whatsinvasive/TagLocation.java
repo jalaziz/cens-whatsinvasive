@@ -20,12 +20,15 @@ import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Bitmap.CompressFormat;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.format.Time;
 import android.util.Log;
 import android.view.Gravity;
@@ -76,6 +79,10 @@ public class TagLocation extends ListActivity implements LocationListener {
     private static final int ACTIVITY_SETTINGS_COMPLETE = 2318;
 
     private static final int GPS_POLL_INTERVAL = 20000;
+    
+    private static final int MAX_IMAGE_WIDTH = 1280;
+    
+    private static final int MAX_IMAGE_HEIGHT = 960;
 
     // private Location current_location;
 
@@ -143,6 +150,8 @@ public class TagLocation extends ListActivity implements LocationListener {
         getListView().setOnItemClickListener(new TagItemClickListener());
         
         updateButtons();
+        
+        createPhotoDirectory();
     }
 
     private View getListHeader() {
@@ -228,34 +237,57 @@ public class TagLocation extends ListActivity implements LocationListener {
         switch (requestCode) {
         case ACTIVITY_CAPTURE_PHOTO:
             if (resultCode == Activity.RESULT_OK) {
-
-                Bitmap image = (Bitmap) data.getExtras().get("data");
-
-                Date date = new Date();
-                long time = date.getTime();
-                String fileName = this.getString(R.string.pic_data_path) + "/"
-                        + time + ".jpg";
+                
+                final String fileName = this.getIntent().getStringExtra("filename");
 
                 try {
-
-                    File ld = new File(this.getString(R.string.pic_data_path));
-                    if (ld.exists()) {
-                        if (!ld.isDirectory()) {
-                            // TODO Handle exception
-                            break;
-                        }
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    
+                    options.inJustDecodeBounds= true;
+                    BitmapFactory.decodeFile(fileName, options);
+                    
+                    int factor = Math.max(options.outWidth / MAX_IMAGE_WIDTH, 
+                            options.outHeight / MAX_IMAGE_HEIGHT);
+                    
+                    options.inSampleSize = msb32(factor);                    
+                    options.inPurgeable = true;
+                    options.inInputShareable = true;
+                    options.inJustDecodeBounds= false;
+                    Bitmap image = BitmapFactory.decodeFile(fileName, options);
+                    Bitmap scaledImage;
+                    
+                    if(image.getWidth() > MAX_IMAGE_WIDTH || image.getHeight() > MAX_IMAGE_HEIGHT) {
+                        float scale = Math.min(MAX_IMAGE_WIDTH/(float)image.getWidth(), 
+                                MAX_IMAGE_HEIGHT/(float)image.getHeight());
+                        int newWidth = (int) ((image.getWidth() * scale) + 0.5f);
+                        int newHeight = (int) ((image.getHeight() * scale) + 0.5f);
+                        scaledImage = Bitmap.createScaledBitmap(image, newWidth, newHeight, true);
+                        image.recycle();
                     } else {
-                        ld.mkdir();
+                        scaledImage = image;
                     }
-
+                    
                     OutputStream os = new FileOutputStream(fileName);
-                    image.compress(CompressFormat.JPEG, 100, os);
+                    scaledImage.compress(CompressFormat.JPEG, 80, os);
                     os.close();
                 } catch (FileNotFoundException e) {
                 } catch (IOException e) {
+                } catch (OutOfMemoryError e) {
+                    new AlertDialog.Builder(this)
+                        .setTitle(R.string.out_of_memory_title)
+                        .setMessage(R.string.out_of_memory_photo_msg)
+                        .setPositiveButton(R.string.out_of_memory_photo_retake, new OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                new File(fileName).delete();
+                                capturePhoto();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .show();
+                    
+                    return;
                 }
 
-                this.getIntent().putExtra("filename", fileName);
                 captureNote();
             }
 
@@ -271,6 +303,16 @@ public class TagLocation extends ListActivity implements LocationListener {
             updateButtons();
             break;
         }
+    }
+    
+    private int msb32(int x)
+    {
+        x |= (x >> 1);
+        x |= (x >> 2);
+        x |= (x >> 4);
+        x |= (x >> 8);
+        x |= (x >> 16);
+        return (x & ~(x >> 1));
     }
 
     private void checkGPS() {
@@ -531,7 +573,15 @@ public class TagLocation extends ListActivity implements LocationListener {
         if (!mPhoto.isChecked()) {
             captureNote();
         } else {
+            Date date = new Date();
+            long time = date.getTime();
+            String fileName = this.getString(R.string.pic_data_path) + "/"
+                    + time + ".jpg";
+
+            this.getIntent().putExtra("filename", fileName);
+        
             Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(fileName)));
             startActivityForResult(intent, ACTIVITY_CAPTURE_PHOTO);
         }
     }
@@ -571,6 +621,17 @@ public class TagLocation extends ListActivity implements LocationListener {
             Toast.makeText(this, getString(R.string.invasive_mapped_notice), 5).show();
         } else {
             Toast.makeText(this, getString(R.string.invasive_mapping_failed), Toast.LENGTH_LONG).show();
+        }
+    }
+    
+    private void createPhotoDirectory() {
+        File ld = new File(this.getString(R.string.pic_data_path));
+        if (ld.exists()) {
+            if (!ld.isDirectory()) {
+                // TODO Handle exception
+            }
+        } else {
+            ld.mkdir();
         }
     }
     
