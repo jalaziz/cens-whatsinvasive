@@ -15,14 +15,14 @@ import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Bitmap.CompressFormat;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -37,18 +37,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 import edu.ucla.cens.whatsinvasive.data.PhotoDatabase;
 import edu.ucla.cens.whatsinvasive.data.TagDatabase;
 import edu.ucla.cens.whatsinvasive.services.LocationService;
@@ -663,6 +662,8 @@ public class TagLocation extends ListActivity implements LocationListener {
         public int id;
 
         public String title;
+        
+        public String scienceName;
 
         public String imagePath;
 
@@ -694,6 +695,7 @@ public class TagLocation extends ListActivity implements LocationListener {
 
             tag.id = c.getInt(c.getColumnIndex(TagDatabase.KEY_ID));
             tag.title = c.getString(c.getColumnIndex(TagDatabase.KEY_TITLE));
+            tag.scienceName = c.getString(c.getColumnIndex(TagDatabase.KEY_SCIENCE_NAME));
             tag.info = c.getString(c.getColumnIndex(TagDatabase.KEY_TEXT));
             tag.imagePath = c.getString(c.getColumnIndex(TagDatabase.KEY_IMAGE_URL));
             tag.flags = c.getString(c.getColumnIndex(TagDatabase.KEY_FLAGS));
@@ -705,22 +707,15 @@ public class TagLocation extends ListActivity implements LocationListener {
         public void bindView(View view, Context context, Cursor c) {
             
             Tag tag = getTag(c);
-            String tagtext = tag.title;
-            // Check if it has only one space, and if so, make it a newline
-            if (tagtext.indexOf(" ") == tagtext.lastIndexOf(" ")) {
-                tagtext = tagtext.replace(' ', '\n');
-            }
 
-            TextView text = (TextView) view.findViewById(R.id.TextView01);
-            final ImageView image = (ImageView) view
-                    .findViewById(R.id.ImageView01);
+            TextView title = (TextView) view.findViewById(R.id.title);
+            TextView scienceName = (TextView) view.findViewById(R.id.science_name);
+            final ImageView image = (ImageView) view.findViewById(R.id.image);
             
             // set item title text
 
-            text.setText(tagtext);
-
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) text
-                    .getLayoutParams();
+            title.setText(tag.title);
+            scienceName.setText(tag.scienceName);
 
             if (tag.flags != null && tag.flags.contains("invasiveofweek")) {
                 view.setBackgroundColor(Color.GREEN);
@@ -729,18 +724,14 @@ public class TagLocation extends ListActivity implements LocationListener {
             }
 
             if (tag.imagePath != null && new File(tag.imagePath).exists()) {
-                Bitmap thumb = Media.resizeImage(tag.imagePath, new Media.Size(
-                        56, 56));
+                Bitmap thumb = Media.resizeImage(tag.imagePath, new Media.Size(56, 56));
 
                 //info.setPadding(thumb.getWidth() - 25, thumb.getHeight() - 40, 0, 0);
 
                 image.setImageBitmap(thumb);
-
                 image.setPadding(1, 1, 1, 1);
-
             } else {
                 image.setImageResource(R.drawable.downloading);
-                
                 image.setPadding(1, 1, 1, 1);
             }
             
