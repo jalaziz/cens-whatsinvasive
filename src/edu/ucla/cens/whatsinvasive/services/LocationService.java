@@ -561,8 +561,10 @@ public class LocationService extends Service {
 
                             TagDatabase.TagRow tag = new TagDatabase.TagRow();
                             tag.title = object.getString("title");
-                            tag.scienceName = object.getString("science");
-                            tag.commonNames = object.getString("common").split(",");
+                            if(object.has("science"))
+                                tag.scienceName = object.getString("science");
+                            if(object.has("common"))
+                                tag.commonNames = object.getString("common").split(",");
                             tag.text = object.getString("text");
                             tag.order = i;
                             tag.flags = object.optString("type");
