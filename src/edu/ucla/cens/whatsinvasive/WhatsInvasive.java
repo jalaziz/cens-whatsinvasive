@@ -23,10 +23,10 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.content.DialogInterface.OnClickListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -46,8 +46,8 @@ import edu.ucla.cens.whatsinvasive.data.ITagDatabase;
 import edu.ucla.cens.whatsinvasive.data.ITagDatabaseCallback;
 import edu.ucla.cens.whatsinvasive.data.TagDatabase;
 import edu.ucla.cens.whatsinvasive.services.LocationService;
-import edu.ucla.cens.whatsinvasive.services.UploadService;
 import edu.ucla.cens.whatsinvasive.services.LocationService.TagUpdateThread;
+import edu.ucla.cens.whatsinvasive.services.UploadService;
 import edu.ucla.cens.whatsinvasive.tools.CustomHttpClient;
 import edu.ucla.cens.whatsinvasive.tools.UpdateThread.UpdateData;
 
@@ -384,9 +384,11 @@ public class WhatsInvasive extends Activity implements Observer {
  
         captureWeed.setEnabled(availablePlantTags > 0);
         captureWeed.setText((availablePlantTags > 0) ? R.string.main_button_mapweed : R.string.main_button_noweeds);
+        captureWeed.setTextSize((availablePlantTags > 0) ? 20 : 18);
         captureBug.setEnabled(availableAnimalTags > 0);
         captureBug.setText((availableAnimalTags > 0) ? R.string.main_button_mapbug : R.string.main_button_nobugs);
-
+        captureBug.setTextSize((availableAnimalTags > 0) ? 20 : 18);
+        
         // Set park caption
         TextView textView = (TextView) this.findViewById(R.id.TextView01); 
         TextView textView2 = (TextView) this.findViewById(R.id.TextView02); 
