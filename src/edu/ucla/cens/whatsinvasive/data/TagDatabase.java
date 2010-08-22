@@ -349,7 +349,7 @@ public class TagDatabase {
 		        db.execSQL("alter table " + DATABASE_TAGS_TABLE + " rename to " + DATABASE_TAGS_TABLE + "_old");
 		        db.execSQL(DATABASE_TAGS_CREATE);
 		        
-		        Cursor cursor = db.query(DATABASE_TAGS_TABLE + "_old", new String[]{KEY_ID, KEY_TITLE, KEY_IMAGE_URL, KEY_TEXT, KEY_FLAGS, KEY_AREA_ID, KEY_ORDER, "type"}, null, null, null, null, KEY_ORDER);
+		        Cursor cursor = db.query(DATABASE_TAGS_TABLE + "_old", new String[]{KEY_ID, KEY_TITLE, KEY_IMAGE_URL, KEY_TEXT, "type", KEY_AREA_ID, KEY_ORDER}, null, null, null, null, KEY_ORDER);
 		        
 		        while (cursor.moveToNext()) {		            
 		            ContentValues vals = new ContentValues();
