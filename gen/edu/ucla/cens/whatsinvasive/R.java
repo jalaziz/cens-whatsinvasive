@@ -69,7 +69,7 @@ public final class R {
         public static final int splashscreen=0x7f020020;
     }
     public static final class id {
-        public static final int Button01=0x7f090013;
+        public static final int Button01=0x7f090014;
         public static final int ButtonLogin=0x7f09003d;
         public static final int ButtonMy=0x7f090043;
         public static final int ButtonParks=0x7f09004a;
@@ -80,9 +80,9 @@ public final class R {
         public static final int ButtonTest=0x7f090040;
         public static final int EditText01=0x7f09003b;
         public static final int EditText02=0x7f09003c;
-        public static final int ImageView00=0x7f090014;
-        public static final int ImageView000=0x7f090015;
-        public static final int ImageView01=0x7f090017;
+        public static final int ImageView00=0x7f090015;
+        public static final int ImageView000=0x7f090016;
+        public static final int ImageView01=0x7f090007;
         public static final int ImageView02=0x7f09001d;
         public static final int ImageView03=0x7f090052;
         public static final int ImageView04=0x7f090025;
@@ -91,14 +91,14 @@ public final class R {
         public static final int ImageView07=0x7f09002b;
         public static final int ImageView08=0x7f09002d;
         public static final int LinearLayout01=0x7f090001;
-        public static final int LinearLayout02=0x7f090009;
-        public static final int LinearLayout03=0x7f09000a;
+        public static final int LinearLayout02=0x7f09000a;
+        public static final int LinearLayout03=0x7f09000b;
         public static final int ListView01=0x7f090003;
         public static final int MapView01=0x7f090006;
         public static final int RelativeLayout=0x7f090071;
         public static final int RelativeLayout01=0x7f090000;
         public static final int RelativeLayout02=0x7f090068;
-        public static final int ScrollView01=0x7f090016;
+        public static final int ScrollView01=0x7f090017;
         public static final int TagRefreshButton=0x7f09004b;
         public static final int TextView01=0x7f090004;
         public static final int TextView02=0x7f090005;
@@ -145,7 +145,7 @@ public final class R {
         public static final int body=0x7f090044;
         public static final int cancel=0x7f090046;
         public static final int center=0x7f09005d;
-        public static final int chart=0x7f09000f;
+        public static final int chart=0x7f090010;
         public static final int check_group=0x7f09006c;
         public static final int common_names=0x7f090058;
         public static final int confirm=0x7f090045;
@@ -159,18 +159,18 @@ public final class R {
         public static final int divider=0x7f090061;
         public static final int few_radio_button=0x7f090066;
         public static final int flipper=0x7f09005b;
-        public static final int global=0x7f090011;
-        public static final int help_title=0x7f090012;
+        public static final int global=0x7f090012;
+        public static final int help_title=0x7f090013;
         public static final int image=0x7f090060;
         public static final int left=0x7f09005c;
         public static final int many_radio_button=0x7f090067;
         public static final int one_radio_button=0x7f090065;
-        public static final int personal=0x7f090010;
-        public static final int pests=0x7f09000b;
-        public static final int photos=0x7f09000c;
+        public static final int personal=0x7f090011;
+        public static final int pests=0x7f09000c;
+        public static final int photos=0x7f09000d;
         public static final int radio_buttons=0x7f090063;
         public static final int radio_group=0x7f090064;
-        public static final int rank=0x7f09000d;
+        public static final int rank=0x7f09000e;
         public static final int right=0x7f09005e;
         public static final int science_name=0x7f090057;
         public static final int settings01=0x7f09004c;
@@ -183,10 +183,10 @@ public final class R {
         public static final int settings08=0x7f090054;
         public static final int settings09=0x7f090055;
         public static final int settings10=0x7f090056;
-        public static final int tab=0x7f090007;
-        public static final int title=0x7f090008;
+        public static final int tab=0x7f090008;
+        public static final int title=0x7f090009;
         public static final int top_bar=0x7f090062;
-        public static final int topusers=0x7f09000e;
+        public static final int topusers=0x7f09000f;
         public static final int version=0x7f090072;
         public static final int with_note=0x7f09006f;
         public static final int with_photo=0x7f09006d;
@@ -240,8 +240,6 @@ public final class R {
         public static final int common_names_prefix=0x7f0800ca;
         public static final int confirm=0x7f080015;
         public static final int credits=0x7f080016;
-        public static final int dialog_progres_updating_invasives=0x7f0800d2;
-        public static final int dialog_progress_wait_images=0x7f0800d3;
         public static final int done=0x7f080017;
         public static final int dontremind=0x7f080018;
         public static final int empty_queue_text=0x7f080019;
