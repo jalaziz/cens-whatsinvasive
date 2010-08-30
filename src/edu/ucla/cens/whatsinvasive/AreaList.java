@@ -6,6 +6,7 @@ import java.util.Observer;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,9 +21,11 @@ import android.os.Message;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.SimpleCursorAdapter;
 import edu.ucla.cens.whatsinvasive.data.TagDatabase;
 import edu.ucla.cens.whatsinvasive.data.TagDatabase.AreaRow;
 import edu.ucla.cens.whatsinvasive.services.LocationService;
@@ -30,7 +33,7 @@ import edu.ucla.cens.whatsinvasive.services.LocationService.AreaUpdateThread;
 import edu.ucla.cens.whatsinvasive.services.LocationService.TagUpdateThread;
 import edu.ucla.cens.whatsinvasive.tools.UpdateThread.UpdateData;
 
-public class AreaList extends Activity implements Observer {
+public class AreaList extends ListActivity implements Observer {
 
 	private final int DIALOG_DOWNLOAD_AREAS = 0;
 	private final int DIALOG_DOWNLOAD_TAGS = 1;
@@ -57,19 +60,56 @@ public class AreaList extends Activity implements Observer {
 	
 	private boolean locationServiceOn = true;
 	
-	private SharedPreferences m_preferences;
+	private SharedPreferences mPreferences;
+	private LocationManager mLocManager;
+	private TagDatabase mDatabase;
+	private Cursor mCursor;
+	private CheckBox mAllParks;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		
-		this.setContentView(R.layout.area_list);
+		setContentView(R.layout.area_list);
 		
-		m_preferences = this.getSharedPreferences(WhatsInvasive.PREFERENCES_USER, Activity.MODE_PRIVATE);
-		locationServiceOn = m_preferences.getBoolean("locationServiceOn", true);
+		mPreferences = this.getSharedPreferences(WhatsInvasive.PREFERENCES_USER, Activity.MODE_PRIVATE);
+		locationServiceOn = mPreferences.getBoolean("locationServiceOn", true);
 		
-		m_preferences.edit().putBoolean("locationServiceOn", false).commit();
+		mPreferences.edit().putBoolean("locationServiceOn", false).commit();
+		
+		mLocManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+		mDatabase = new TagDatabase(this);
+		
+		getListView().setOnItemClickListener(new OnItemClickListener(){
+		    
+            public void onItemClick(AdapterView<?> arg0, View arg1, int position,
+                    long id) {
+                // Set fixed park and location
+                AreaRow row = mDatabase.getArea(id);
+                
+                Bundle data = new Bundle();
+                data.putLong("id", row.id);
+                data.putDouble("latitude", row.latitude);
+                data.putDouble("longitude", row.longitude);
+                
+                Message msg = new Message();
+                msg.what = MESSAGE_DOWNLOAD_TAGS;
+                msg.setData(data);
+                
+                AreaList.this.handler.sendMessage(msg);
+                //editor.putBoolean("locationServiceOn", false).commit();
+            }});
+		
+		mAllParks = (CheckBox) findViewById(R.id.check_all);
+		mAllParks.setChecked(mPreferences.getBoolean("all_parks", false));
+		mAllParks.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mPreferences.edit().putBoolean("all_parks", isChecked).commit();
+                setupList();
+            }
+        });
 	}
 	
 	@Override 
@@ -84,81 +124,62 @@ public class AreaList extends Activity implements Observer {
 		thread.getObservable().addObserver(this);
 		
 		thread.start();	
+		
+		mDatabase.openRead();
+		
+        mAllParks.setVisibility(!(mLocManager.isProviderEnabled("gps") || 
+                        mLocManager.isProviderEnabled("network")) 
+                        ? View.GONE
+                        : View.VISIBLE);
+	}
+	
+	@Override
+	protected void onPause() {
+	    mDatabase.close();
+	    
+	    super.onPause();
 	}
 	
 	private void setupList()
 	{
-		LocationManager manager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-		
-		final TagDatabase db = new TagDatabase(this);
-		db.openRead();
-		
-		Cursor areas = null;
 		boolean orderedByName = false;
 		
-		if(!(manager.isProviderEnabled("gps") || manager.isProviderEnabled("network"))){
+		if(!(mLocManager.isProviderEnabled("gps") || mLocManager.isProviderEnabled("network"))){
 			// TODO: Location is disable, show dialog
-			areas = db.getAreasByName();
+			mCursor = mDatabase.getAreasByName();
 			
 			orderedByName = true;
 		}else{
 			// Check if we can actually get a location
 			Location location = null;
 			
-			if(manager.isProviderEnabled("gps"))
-				location = manager.getLastKnownLocation("gps");
-			else if(manager.isProviderEnabled("network"))
-				location = manager.getLastKnownLocation("network");
+			if(mLocManager.isProviderEnabled("gps"))
+				location = mLocManager.getLastKnownLocation("gps");
+			else if(mLocManager.isProviderEnabled("network"))
+				location = mLocManager.getLastKnownLocation("network");
 			
-			if(location==null){
+			if(location==null || mAllParks.isChecked()){
 				// Didn't get anything so ask user to set a location for now
-				areas = db.getAreasByName();
+				mCursor = mDatabase.getAreasByName();
 				
 				orderedByName = true;
 			}else{
 				// This assumes that the list is already sorted by the location service
-				areas = db.getAreas(VISIBLE_PARKS);
+				mCursor = mDatabase.getAreas(VISIBLE_PARKS);
 			}
 		}
 		
-		this.startManagingCursor(areas);
-		
-		try {
-			SimpleCursorAdapter adapter = null;
-			
-			if(!orderedByName)
-				adapter = new SimpleCursorAdapter(this, R.layout.area_list_item, areas, new String[]{TagDatabase.KEY_TITLE, TagDatabase.KEY_DISTANCE}, new int[]{android.R.id.text1, android.R.id.text2});
-			else
-				adapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, areas, new String[]{TagDatabase.KEY_TITLE}, new int[]{android.R.id.text1});
-			
-			ListView list = (ListView) this.findViewById(R.id.ListView01);
-			list.setAdapter(adapter);
-			list.setOnItemClickListener(new OnItemClickListener(){
-	
-				public void onItemClick(AdapterView<?> arg0, View arg1, int position,
-						long id) {
-					// Set fixed park and location
-					db.openRead();
-					AreaRow row = db.getArea(id);
-					db.close();
-					
-					Bundle data = new Bundle();
-					data.putLong("id", row.id);
-					data.putDouble("latitude", row.latitude);
-					data.putDouble("longitude", row.longitude);
-					
-					Message msg = new Message();
-					msg.what = MESSAGE_DOWNLOAD_TAGS;
-					msg.setData(data);
-					
-					AreaList.this.handler.sendMessage(msg);
-					//editor.putBoolean("locationServiceOn", false).commit();
-				}});
-		} catch(RuntimeException ex) {
-			ex.printStackTrace();
-		}
-		
-		db.close();
+		startManagingCursor(mCursor);
+        
+        setListAdapter(!orderedByName 
+                ? new SimpleCursorAdapter(this,
+                        R.layout.area_list_item, mCursor, new String[] {
+                        TagDatabase.KEY_TITLE, TagDatabase.KEY_DISTANCE },
+                        new int[] { android.R.id.text1, android.R.id.text2 })
+                : new SimpleCursorAdapter(this,
+                        android.R.layout.simple_list_item_1, mCursor,
+                        new String[] { TagDatabase.KEY_TITLE },
+                        new int[] { android.R.id.text1 }));
 	}
 	
 	@Override
@@ -267,12 +288,9 @@ public class AreaList extends Activity implements Observer {
 					
 					editor.putString("fixedLocation",  msg.getData().getDouble("latitude") +","+ msg.getData().getDouble("longitude")).commit();
 					editor.putLong("fixedArea", msg.getData().getLong("id")).commit();
-					TagDatabase db = new TagDatabase(AreaList.this);
-					db.openRead();
 
-					int availableTags = db.getTagsAvailable(msg.getData().getLong("id"), null);
+					int availableTags = mDatabase.getTagsAvailable(msg.getData().getLong("id"), null);
 
-					db.close();
 					if(availableTags == 0){
 						TagUpdateThread thread = new TagUpdateThread(AreaList.this, msg.getData().getLong("id"));
 						thread.getObservable().addObserver(AreaList.this);

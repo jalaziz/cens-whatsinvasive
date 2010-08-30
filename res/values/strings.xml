@@ -209,4 +209,5 @@
 <string name="feedback_tabs_global">Global Stats</string>
 <string name="feedback_fail">Failed to download results.\n\nMake sure you have network coverage before trying again.</string>
 <string name="feedback_timeout">No response</string>
+<string name="toggle_all_parks">Show All Parks</string>
 </resources>
