@@ -18,16 +18,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.util.Linkify;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnCreateContextMenuListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 import android.widget.TwoLineListItem;
-import android.widget.AdapterView.OnItemClickListener;
 import edu.ucla.cens.whatsinvasive.data.PhotoDatabase;
 import edu.ucla.cens.whatsinvasive.data.PhotoDatabase.PhotoDatabaseRow;
 import edu.ucla.cens.whatsinvasive.tools.Media;
@@ -117,6 +117,9 @@ public class Queue extends ListActivity implements PhotoDatabase.OnChangeListene
 	    // We have to close the database here so that the other 
 	    // activities (e.g. ViewTag) can use the PhotoDatabase
 	    PhotoDatabase.removeChangeListener(this);
+	    
+	    stopManagingCursor(mCursor);
+	    mCursor.close();
 	    mDatabase.close();
 	    
 	    super.onPause();
