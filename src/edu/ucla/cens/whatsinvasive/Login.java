@@ -2,6 +2,8 @@ package edu.ucla.cens.whatsinvasive;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.util.Observable;
+import java.util.Observer;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -14,6 +16,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -28,20 +31,30 @@ import android.view.View.OnKeyListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import edu.ucla.cens.whatsinvasive.data.TagDatabase;
+import edu.ucla.cens.whatsinvasive.services.LocationService;
+import edu.ucla.cens.whatsinvasive.services.LocationService.AreaUpdateThread;
 import edu.ucla.cens.whatsinvasive.tools.CustomHttpClient;
+import edu.ucla.cens.whatsinvasive.tools.UpdateThread.UpdateData;
 
-public class Login extends Activity {
+public class Login extends Activity implements Observer {
 	private final String VALIDATE_URL = "http://sm.whatsinvasive.com/phone/auth_post.php";
 	private final String REGISTER_URL = "http://sm.whatsinvasive.com/phone/register.php";
 	
 	private final int DIALOG_LOGGING = 0;
 	private final int DIALOG_TIMEOUT = 1;
+	private final int DIALOG_TEST_LOGIN = 2;
+	private final int DIALOG_AREAS_DOWNLOAD = 3;
+	private final int DIALOG_AREAS_TIMEOUT = 4;
 	
 	private final int MESSAGE_INVALID_LOGIN = 0;
 	private final int MESSAGE_LOGIN = 1;
 	private final int MESSAGE_LOGIN_TIMEOUT = 2;
 	private final int MESSAGE_LOGIN_RETRY = 3;
 	private final int MESSAGE_LOGIN_CANCEL = 4;
+	private final int MESSAGE_AREAS_COMPLETE = 5;
+	private final int MESSAGE_AREAS_TIMEOUT = 6;
+	private final int MESSAGE_AREAS_CANCEL = 7;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -161,6 +174,14 @@ public class Login extends Activity {
 		}
 	}
 	
+	public void updateAreas() {
+	    this.showDialog(DIALOG_AREAS_DOWNLOAD);
+	    
+	    AreaUpdateThread thread = new AreaUpdateThread(this, true, LocationService.getLocation(this));
+	    thread.getObservable().addObserver(this);
+	    thread.start();
+	}
+	
 	private final Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg){
@@ -181,9 +202,15 @@ public class Login extends Activity {
 					edit.putString("password", values[1]);
 					
 					edit.commit();
-
-			        	Login.this.setResult(Activity.RESULT_OK);
-					Login.this.finish();
+					
+					Login.this.dismissDialog(DIALOG_LOGGING);
+					
+					if(values[0].equals("test") && values[1].equals("test")) {
+					    Login.this.showDialog(DIALOG_TEST_LOGIN);
+					} else {
+					    updateAreas();
+					}
+					
 					break;
 				case MESSAGE_LOGIN_TIMEOUT:
 					Login.this.dismissDialog(DIALOG_LOGGING);
@@ -198,6 +225,16 @@ public class Login extends Activity {
 				    Login.this.setResult(Activity.RESULT_CANCELED);
 					Login.this.finish();
 					break;
+				case MESSAGE_AREAS_CANCEL:
+				case MESSAGE_AREAS_COMPLETE:
+                    Login.this.dismissDialog(DIALOG_AREAS_DOWNLOAD);
+                    Login.this.setResult(Activity.RESULT_OK);
+                    Login.this.finish();
+                    break;
+                case MESSAGE_AREAS_TIMEOUT:
+                    Login.this.dismissDialog(DIALOG_AREAS_DOWNLOAD);
+                    Login.this.showDialog(DIALOG_AREAS_TIMEOUT);
+                    break;
 			}
 		}
 	};
@@ -205,38 +242,110 @@ public class Login extends Activity {
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		Dialog dialog = null;
+		ProgressDialog progress;
 		
 		switch(id){
-			case DIALOG_LOGGING:
-				ProgressDialog progress = new ProgressDialog(this);
-				
-				progress.setTitle(getString(R.string.login_loading));
-				progress.setMessage(getString(R.string.login_please_wait));
-				progress.setIndeterminate(true);
-				progress.setCancelable(false);
-				
-				dialog = progress;
-				
-				break;
-			case DIALOG_TIMEOUT:
-				dialog = new AlertDialog.Builder(this)
-					.setTitle(getString(R.string.login_timeout_title))
-					.setMessage(getString(R.string.login_timeout_msg))
-					.setPositiveButton(getString(R.string.login_retry_button), new DialogInterface.OnClickListener(){
+		case DIALOG_AREAS_DOWNLOAD:
+		    progress = new ProgressDialog(this);
+            
+            progress.setTitle(getString(R.string.area_list_updating));
+            progress.setMessage(getString(R.string.area_list_wait));
+            progress.setIndeterminate(true);
+            progress.setCancelable(true);
+            progress.setOnCancelListener(new OnCancelListener() {
 
-						public void onClick(DialogInterface dialog, int which) {
-							Login.this.handler.sendEmptyMessage(MESSAGE_LOGIN_RETRY);
-						}})
-					.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener(){
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    Login.this.handler.sendEmptyMessage(MESSAGE_AREAS_CANCEL);
+                }
+            });
+            
+            dialog = progress;
+		    break;
+		case DIALOG_AREAS_TIMEOUT:
+            dialog = new AlertDialog.Builder(this)
+            .setTitle(getString(R.string.area_list_timeout))
+            .setMessage(getString(R.string.area_list_fail))
+            .setPositiveButton(android.R.string.ok, null)
+            .create();
+            
+            break;
+		case DIALOG_LOGGING:
+			progress = new ProgressDialog(this);
+			
+			progress.setTitle(getString(R.string.login_loading));
+			progress.setMessage(getString(R.string.login_please_wait));
+			progress.setIndeterminate(true);
+			progress.setCancelable(false);
+			
+			dialog = progress;
+			break;
+		case DIALOG_TIMEOUT:
+			dialog = new AlertDialog.Builder(this)
+				.setTitle(getString(R.string.login_timeout_title))
+				.setMessage(getString(R.string.login_timeout_msg))
+				.setPositiveButton(getString(R.string.login_retry_button), new DialogInterface.OnClickListener(){
 
-						public void onClick(DialogInterface dialog, int which) {
-							Login.this.handler.sendEmptyMessage(MESSAGE_LOGIN_CANCEL);
-						}})
-					
-					.create();
-				break;
+					public void onClick(DialogInterface dialog, int which) {
+						Login.this.handler.sendEmptyMessage(MESSAGE_LOGIN_RETRY);
+					}})
+				.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener(){
+
+					public void onClick(DialogInterface dialog, int which) {
+						Login.this.handler.sendEmptyMessage(MESSAGE_LOGIN_CANCEL);
+					}})
+				
+				.create();
+			break;
+		case DIALOG_TEST_LOGIN:
+		    dialog = new AlertDialog.Builder(Login.this)
+		        .setTitle(getString(R.string.login_test_title))
+		        .setMessage(getString(R.string.login_test_msg))
+		        .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        
+                        SharedPreferences preferences = Login.this.getSharedPreferences(WhatsInvasive.PREFERENCES_USER, Activity.MODE_PRIVATE);
+                        
+                        preferences.edit()
+                                   .putBoolean("locationServiceOn", false)
+                                   .putLong("fixedArea", TagDatabase.DEMO_PARK_ID)
+                                   .commit();
+                        
+                        updateAreas();
+                
+                    }
+		        })
+		        .setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        SharedPreferences preferences = Login.this.getSharedPreferences(WhatsInvasive.PREFERENCES_USER, Activity.MODE_PRIVATE);
+                        
+                        Editor edit = preferences.edit();
+                        edit.remove("username");
+                        edit.remove("password");
+                        edit.commit();
+                    }
+                })
+		        .create();
+		    break;
 		}
 			
 		return dialog;
 	}
+
+    @Override
+    public void update(Observable observable, Object data) {
+        UpdateData update = (UpdateData) data;
+
+        if(update.source.equals("AreaUpdateThread")) {
+            if(update.allDone){
+                handler.sendEmptyMessage(MESSAGE_AREAS_COMPLETE);
+            } else if(update.description.equals("timeout")) {
+                handler.sendEmptyMessage(MESSAGE_AREAS_TIMEOUT);
+            } else if(update.description.equals("no_response")) {
+                handler.sendEmptyMessage(MESSAGE_AREAS_TIMEOUT);
+            }
+        }
+    }
 }

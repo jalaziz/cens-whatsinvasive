@@ -9,8 +9,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Queue;
 import java.util.UUID;
 
@@ -175,7 +173,7 @@ public class LocationService extends Service {
         }
     }
 
-    private class MonitorThread extends Thread implements Observer {
+    private class MonitorThread extends Thread {
         private final long UPDATE_INTERVAL_ON = 60000;
 
         private final long UPDATE_INTERVAL_OFF = 60000 * 60 * 12;
@@ -203,11 +201,9 @@ public class LocationService extends Service {
 
             while (runThread) {
                 try {
+                    updateDistances(getLocation(this.context));
+                    
                     if (preferences.getBoolean("locationServiceOn", true)) {
-                        Location location = getLocation(this.context);
-
-                        updateDistances(location);
-
                         Thread.sleep(UPDATE_INTERVAL_ON);
                     } else {
                         Thread.sleep(UPDATE_INTERVAL_OFF);
@@ -269,31 +265,6 @@ public class LocationService extends Service {
 
                 db.close();
             }
-
-            if (location == null || areas.size() == 0 || checkForChanges(areas)) {
-                // Spawn update tag list thread
-                AreaUpdateThread thread = new AreaUpdateThread(
-                        LocationService.this, true, location);
-                thread.getObservable().addObserver(this);
-
-                thread.run();
-            }
-        }
-
-        private boolean checkForChanges(ArrayList<TagDatabase.AreaRow> areas) {
-            if (areas == null || areas.size() == 0)
-                return true;
-
-            for (int i = 1; i < areas.size(); i++) {
-                if (areas.get(i).distance < areas.get(0).distance)
-                    return true;
-            }
-
-            return false;
-        }
-
-        public void update(Observable observable, Object data) {
-            parkChanged();
         }
     }
 
@@ -367,9 +338,9 @@ public class LocationService extends Service {
 
         @Override
         public void run() {
-            downloadAreas(location);
-
-            if (sync) {
+            UpdateData result = downloadAreas(location);
+            
+            if (sync && result.allDone) {
                 SharedPreferences preferences = context.getSharedPreferences(
                         WhatsInvasive.PREFERENCES_USER, Activity.MODE_PRIVATE);
 
@@ -400,21 +371,22 @@ public class LocationService extends Service {
                     Cursor tagsCursor = db.getTags(id, null);
 
                     if (tagsCursor.getCount() == 0)
-                        downloadTags(id);
+                        result = downloadTags(id);
+                    
                     tagsCursor.close();
                 } else {
-                    this.setChanged(new UpdateData(
+                    result = new UpdateData(
                                     context.getString(R.string.locationservice_no_park),
-                                    true));
+                                    true);
                 }
 
                 db.close();
-            } else {
-                this.setChanged(new UpdateData(true));
             }
+            
+            this.setChanged(result);
         }
 
-        private void downloadAreas(Location location) {
+        private UpdateData downloadAreas(Location location) {
             // Download the list of all areas
             List<NameValuePair> qparams = new ArrayList<NameValuePair>();
 
@@ -424,9 +396,6 @@ public class LocationService extends Service {
                 qparams.add(new BasicNameValuePair("lon", String
                         .valueOf(location.getLongitude())));
             }
-
-            if (sync)
-                qparams.add(new BasicNameValuePair("r", "5"));
 
             try {
                 StringBuilder result = sendRequest(context
@@ -469,11 +438,12 @@ public class LocationService extends Service {
                     }
 
                     db.close();
+                    return new UpdateData(true);
+                } else {
+                    return new UpdateData("no_response", false);
                 }
-
-                this.setChanged(new UpdateData(true));
             } catch (SocketTimeoutException e2) {
-                this.setChanged(new UpdateData("timeout", false));
+                return new UpdateData("timeout", false);
             }
         }
     }
@@ -489,11 +459,11 @@ public class LocationService extends Service {
 
         @Override
         public void run() {
-            downloadTags(id);
-            this.observable.notifyObservers(new UpdateData(true));
+            UpdateData result = downloadTags(id);
+            this.observable.notifyObservers(result);
         }
 
-        protected void downloadTags(long id) {
+        protected UpdateData downloadTags(long id) {
             UpdateData result = null;
             Queue<ThumbnailUpdateThread.Thumbnail> thumbQueue = new LinkedList<ThumbnailUpdateThread.Thumbnail>();
             TagDatabase db = new TagDatabase(context);
@@ -517,7 +487,7 @@ public class LocationService extends Service {
                 this.downloadThumbnails();
             }
 
-            this.setChanged(result);
+            return result;
         }
 
         private UpdateData downloadTags(long id, TagType type, TagDatabase db,

@@ -176,7 +176,7 @@
 <string name="version_date">1265090400</string>
 <string name="version_url">http://sm.whatsinvasive.com/phone/getversion.php</string>
 
-<string name="login_anon">Use Test Login</string>
+<string name="login_anon">Preview Mode</string>
 <string name="notes_on">Notes</string>
 <string name="notes_off">Notes</string>
 <string name="title_helpimg">What\'s Invasive! -  Main Help</string>
@@ -210,4 +210,6 @@
 <string name="feedback_fail">Failed to download results.\n\nMake sure you have network coverage before trying again.</string>
 <string name="feedback_timeout">No response</string>
 <string name="toggle_all_parks">Show All Parks</string>
+<string name="login_test_title">Using Preview Mode</string>
+<string name="login_test_msg">While in Preview Mode, you can explore all the feautures of the application. However, you may only submit observations to the DEMO park.\n\nTo select the DEMO park please go to Settings->\"Show parks\" then select DEMO from the list.</string>
 </resources>

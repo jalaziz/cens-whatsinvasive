@@ -12,6 +12,7 @@ import java.util.TimeZone;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -82,6 +83,8 @@ public class TagLocation extends ListActivity implements LocationListener {
     private static final int MAX_IMAGE_WIDTH = 1280;
     
     private static final int MAX_IMAGE_HEIGHT = 960;
+    
+    private final int DIALOG_TEST_LOGIN = 0;
 
     // private Location current_location;
 
@@ -304,6 +307,21 @@ public class TagLocation extends ListActivity implements LocationListener {
         }
     }
     
+    @Override
+    protected Dialog onCreateDialog(int id) {        
+        switch(id) {
+        case DIALOG_TEST_LOGIN:
+            return new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.login_test_title))
+                .setMessage(getString(R.string.login_test_msg))
+                .setPositiveButton(getString(android.R.string.ok), null)
+                .create();
+        default:
+            return super.onCreateDialog(id);
+        
+        }
+    }
+
     private int msb32(int x)
     {
         x |= (x >> 1);
@@ -451,7 +469,9 @@ public class TagLocation extends ListActivity implements LocationListener {
                 .getSystemService(Context.LOCATION_SERVICE);
         SharedPreferences preferences = activity.getSharedPreferences(
                 WhatsInvasive.PREFERENCES_USER, Activity.MODE_PRIVATE);
-        preferences.edit().putLong("fixedArea", 9).commit();
+        
+        if(preferences.getLong("fixedArea", -1) == -1)
+            preferences.edit().putLong("fixedArea", 9).commit();
 
         if (!(manager.isProviderEnabled("gps") || manager
                 .isProviderEnabled("network"))) {
@@ -642,6 +662,15 @@ public class TagLocation extends ListActivity implements LocationListener {
             
             if(data == null)
                 return;
+            
+            String username = mPreferences.getString("username", "");
+            String password = mPreferences.getString("password", "");
+            
+            if(username.equals("test") && password.equals("test") 
+                    && LocationService.getParkId(TagLocation.this) != TagDatabase.DEMO_PARK_ID) {
+                TagLocation.this.showDialog(DIALOG_TEST_LOGIN);
+                return;
+            }
 
             final String tagtext = data.title;
 

@@ -39,6 +39,8 @@ public class TagDatabase {
 	
 	private static final int DATABASE_VERSION = 3;
 	
+	public static final long DEMO_PARK_ID = 55;
+	
 	private static boolean databaseOpen = false;
 	private static Object dbLock = new Object();
 	private final DatabaseHelper dbHelper;

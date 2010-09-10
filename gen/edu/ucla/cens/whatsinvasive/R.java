@@ -324,6 +324,8 @@ public final class R {
         public static final int login_register_button=0x7f08005e;
         public static final int login_reset_button=0x7f08005f;
         public static final int login_retry_button=0x7f080060;
+        public static final int login_test_msg=0x7f0800d4;
+        public static final int login_test_title=0x7f0800d3;
         public static final int login_timeout_msg=0x7f080061;
         public static final int login_timeout_title=0x7f080062;
         public static final int login_username=0x7f080063;
