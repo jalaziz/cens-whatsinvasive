@@ -452,7 +452,7 @@ public class TagLocation extends ListActivity implements LocationListener {
             // taken)
             pdb.open();
             long photo_created = pdb.createPhoto(longitude, latitude, time,
-                    filename, tag, LocationService.getParkId(this), amount, note);
+                    filename, tag, LocationService.getParkId(this), amount, note, mTagType.value());
             pdb.close();
 
             // start the upload service if auto upload is on because we now have

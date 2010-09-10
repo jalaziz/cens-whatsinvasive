@@ -24,6 +24,7 @@ public class PhotoDatabase {
 	public static final String KEY_PHOTO_AMOUNT = "photo_amount";
 	public static final String KEY_PHOTO_ROWID = "_id";
 	public static final String KEY_PHOTO_NOTE = "photo_note";
+	public static final String KEY_PHOTO_TYPE = "type";
 
 	public static final String TAG = "photoDB";
 	private boolean databaseOpen = false;
@@ -34,7 +35,7 @@ public class PhotoDatabase {
 	
 	private static final String DATABASE_NAME = "photo_db";
 	private static final String DATABASE_TABLE = "photo_table";
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 3;
 	private static final int UPLOAD_DELAY_SEC = 60; // seconds
 	
 	private static final String DATABASE_CREATE = "create table photo_table (_id integer primary key autoincrement, "
@@ -46,7 +47,8 @@ public class PhotoDatabase {
 		+ KEY_PHOTO_AREA +" integer,"
 		+ KEY_PHOTO_TAGS +" text not null,"
 		+ KEY_PHOTO_AMOUNT +" text not null,"
-		+ KEY_PHOTO_NOTE + " text"
+		+ KEY_PHOTO_NOTE + " text,"
+		+ KEY_PHOTO_TYPE + " integer"
 		+ ");";
 	
     public class PhotoDatabaseRow {
@@ -60,6 +62,7 @@ public class PhotoDatabase {
         	public String uploadValue;
         	public String amountValue;
         	public String noteValue;
+        	public int typeValue;
     }
     
     private static final CopyOnWriteArrayList<OnChangeListener> m_changeListeners = new CopyOnWriteArrayList<OnChangeListener>();
@@ -114,7 +117,7 @@ public class PhotoDatabase {
 	    return false;
 	}
 	
-	public long createPhoto(String lon, String lat, String time, String filename, String tags, Long area, String amount, String note)
+	public long createPhoto(String lon, String lat, String time, String filename, String tags, Long area, String amount, String note, Integer type)
 	{		
 		ContentValues vals = new ContentValues();
 		vals.put(KEY_PHOTO_LONGITUDE, lon);
@@ -125,6 +128,7 @@ public class PhotoDatabase {
 		vals.put(KEY_PHOTO_AREA, area);
 		vals.put(KEY_PHOTO_AMOUNT, amount);
 		vals.put(KEY_PHOTO_NOTE, note);
+		vals.put(KEY_PHOTO_TYPE, type);
 		
 		long rowid = db.insert(DATABASE_TABLE, null, vals);
 		
@@ -153,7 +157,7 @@ public class PhotoDatabase {
             db = dbHelper.getReadableDatabase();
         }
 	    
-		return db.query(DATABASE_TABLE, new String[]{KEY_PHOTO_ROWID, KEY_PHOTO_FILENAME, KEY_PHOTO_TAGS, KEY_PHOTO_TIME, KEY_PHOTO_LATITUDE, KEY_PHOTO_LONGITUDE, KEY_PHOTO_AREA, KEY_PHOTO_UPLOADED, KEY_PHOTO_AMOUNT, KEY_PHOTO_NOTE}, null, null, null, null, KEY_PHOTO_TIME + " DESC");
+		return db.query(DATABASE_TABLE, new String[]{KEY_PHOTO_ROWID, KEY_PHOTO_FILENAME, KEY_PHOTO_TAGS, KEY_PHOTO_TIME, KEY_PHOTO_LATITUDE, KEY_PHOTO_LONGITUDE, KEY_PHOTO_AREA, KEY_PHOTO_UPLOADED, KEY_PHOTO_AMOUNT, KEY_PHOTO_NOTE, KEY_PHOTO_TYPE}, null, null, null, null, KEY_PHOTO_TIME + " DESC");
 	}
 	
 	public ArrayList<PhotoDatabaseRow> fetchUploadedPhotos(int max) {
@@ -163,7 +167,7 @@ public class PhotoDatabase {
 		{
 			String where = "NOT "+ KEY_PHOTO_UPLOADED +" IS NULL";
 			
-			Cursor c = db.query(DATABASE_TABLE, new String[] {KEY_PHOTO_ROWID, KEY_PHOTO_LONGITUDE, KEY_PHOTO_LATITUDE, KEY_PHOTO_TIME, KEY_PHOTO_FILENAME, KEY_PHOTO_TAGS, KEY_PHOTO_AREA, KEY_PHOTO_UPLOADED, KEY_PHOTO_AMOUNT, KEY_PHOTO_NOTE}, where, null, null, null, null);
+			Cursor c = db.query(DATABASE_TABLE, new String[] {KEY_PHOTO_ROWID, KEY_PHOTO_LONGITUDE, KEY_PHOTO_LATITUDE, KEY_PHOTO_TIME, KEY_PHOTO_FILENAME, KEY_PHOTO_TAGS, KEY_PHOTO_AREA, KEY_PHOTO_UPLOADED, KEY_PHOTO_AMOUNT, KEY_PHOTO_NOTE, KEY_PHOTO_TYPE}, where, null, null, null, null);
 			int read = 0;
 			
 			while(c.moveToNext() && read < max)
@@ -182,6 +186,7 @@ public class PhotoDatabase {
 				pr.uploadValue = c.getString(7);
 				pr.amountValue = c.getString(8);
 				pr.noteValue = c.getString(9);
+				pr.typeValue = c.getInt(10);
 				
 				ret.add(pr);
 			}
@@ -206,7 +211,7 @@ public class PhotoDatabase {
 		{
 			String where = KEY_PHOTO_UPLOADED +" IS NULL AND (strftime('%s', 'now')-strftime('%s', "+ KEY_PHOTO_TIME +"))>"+ delay;
 			
-			Cursor c = db.query(DATABASE_TABLE, new String[] {KEY_PHOTO_ROWID, KEY_PHOTO_LONGITUDE, KEY_PHOTO_LATITUDE, KEY_PHOTO_TIME, KEY_PHOTO_FILENAME, KEY_PHOTO_TAGS, KEY_PHOTO_AREA, KEY_PHOTO_UPLOADED, KEY_PHOTO_AMOUNT, KEY_PHOTO_NOTE}, where, null, null, null, KEY_PHOTO_TIME + " ASC");
+			Cursor c = db.query(DATABASE_TABLE, new String[] {KEY_PHOTO_ROWID, KEY_PHOTO_LONGITUDE, KEY_PHOTO_LATITUDE, KEY_PHOTO_TIME, KEY_PHOTO_FILENAME, KEY_PHOTO_TAGS, KEY_PHOTO_AREA, KEY_PHOTO_UPLOADED, KEY_PHOTO_AMOUNT, KEY_PHOTO_NOTE, KEY_PHOTO_TYPE}, where, null, null, null, KEY_PHOTO_TIME + " ASC");
 			int numRows = c.getCount();
 			
 			c.moveToFirst();
@@ -225,6 +230,7 @@ public class PhotoDatabase {
 				pr.uploadValue = c.getString(7);
 				pr.amountValue = c.getString(8);
 				pr.noteValue = c.getString(9);
+				pr.typeValue = c.getInt(10);
 				
 				ret.add(pr);
 				
@@ -241,7 +247,7 @@ public class PhotoDatabase {
 	
 	public PhotoDatabaseRow fetchPhoto(long rowId) throws SQLException
 	{
-		Cursor c = db.query(DATABASE_TABLE, new String[] {KEY_PHOTO_ROWID, KEY_PHOTO_LONGITUDE, KEY_PHOTO_LATITUDE, KEY_PHOTO_TIME, KEY_PHOTO_FILENAME, KEY_PHOTO_TAGS, KEY_PHOTO_AREA, KEY_PHOTO_UPLOADED, KEY_PHOTO_AMOUNT, KEY_PHOTO_NOTE}, KEY_PHOTO_ROWID+"="+rowId, null, null, null, null);
+		Cursor c = db.query(DATABASE_TABLE, new String[] {KEY_PHOTO_ROWID, KEY_PHOTO_LONGITUDE, KEY_PHOTO_LATITUDE, KEY_PHOTO_TIME, KEY_PHOTO_FILENAME, KEY_PHOTO_TAGS, KEY_PHOTO_AREA, KEY_PHOTO_UPLOADED, KEY_PHOTO_AMOUNT, KEY_PHOTO_NOTE, KEY_PHOTO_TYPE}, KEY_PHOTO_ROWID+"="+rowId, null, null, null, null);
 		PhotoDatabaseRow ret = new PhotoDatabaseRow();
 
 		if (c != null) {
@@ -257,11 +263,12 @@ public class PhotoDatabase {
 			ret.uploadValue = c.getString(7);
 			ret.amountValue = c.getString(8);
 			ret.noteValue = c.getString(9);
+			ret.typeValue = c.getInt(10);
 		}
 		else
 		{
-			ret.rowValue = ret.areaValue = -1;
-			ret.lonValue = ret.latValue = ret.timeValue = ret.filenameValue = ret.tagsValue = ret.amountValue = ret.noteValue  = null;
+			ret.rowValue = ret.areaValue = ret.typeValue = -1;
+			ret.lonValue = ret.latValue = ret.timeValue = ret.filenameValue = ret.tagsValue = ret.amountValue = ret.noteValue = null;
 		}
 		c.close();
 		return ret;
@@ -272,7 +279,7 @@ public class PhotoDatabase {
 		onChange();
 	}
 	
-	public boolean updatePhoto(long rowId, String lon, String lat, String time, String filename, String tags, Long area, String amount, String note) {
+	public boolean updatePhoto(long rowId, String lon, String lat, String time, String filename, String tags, Long area, String amount, String note, Long type) {
 		ContentValues vals = new ContentValues();
 		vals.put(KEY_PHOTO_LONGITUDE, lon);
 		vals.put(KEY_PHOTO_LATITUDE, lat);
@@ -282,6 +289,7 @@ public class PhotoDatabase {
 		vals.put(KEY_PHOTO_AREA, area);
 		vals.put(KEY_PHOTO_AMOUNT, amount);
 		vals.put(KEY_PHOTO_NOTE, note);
+		vals.put(KEY_PHOTO_TYPE, type);
 		
 		boolean result = db.update(DATABASE_TABLE, vals,KEY_PHOTO_ROWID+"="+rowId, null) > 0;
 		
