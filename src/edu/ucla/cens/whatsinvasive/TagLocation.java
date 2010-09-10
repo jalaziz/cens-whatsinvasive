@@ -56,13 +56,13 @@ import edu.ucla.cens.whatsinvasive.services.UploadService;
 import edu.ucla.cens.whatsinvasive.tools.Media;
 
 public class TagLocation extends ListActivity implements LocationListener {
-    private final int CONTEXT_HELP = 0;
-
+    
     public static final String PREFERENCES_USER = "user";
     
     private TagDatabase mDatabase;
+    private Cursor mCursor;
     
-    private TagType tagType;
+    private TagType mTagType;
 
     private static final int ACTIVITY_CAPTURE_PHOTO = 0;
     
@@ -105,9 +105,9 @@ public class TagLocation extends ListActivity implements LocationListener {
         mPreferences = this.getSharedPreferences(PREFERENCES_USER,
                 Activity.MODE_PRIVATE);
 
-        tagType = (TagType)TagLocation.this.getIntent().getSerializableExtra("Type");
+        mTagType = (TagType)TagLocation.this.getIntent().getSerializableExtra("Type");
         
-        if(tagType == null) tagType = TagType.WEED;
+        if(mTagType == null) mTagType = TagType.WEED;
 
         // show tag help on first run
         if (!mPreferences.getBoolean("Seen Tag Help", false)) {
@@ -140,20 +140,33 @@ public class TagLocation extends ListActivity implements LocationListener {
         }
 
         mDatabase = new TagDatabase(this);
-        mDatabase.openRead();
-        
-        Cursor tags = mDatabase.getTags(LocationService.getParkId(this), TagLocation.this.tagType);
-        startManagingCursor(tags);
-        
+                
         getListView().addHeaderView(getListHeader());
-
-        setListAdapter(new TagAdapter(tags));
-        
         getListView().setOnItemClickListener(new TagItemClickListener());
+        
+        createPhotoDirectory();
+    }
+
+    @Override
+    protected void onResume() {
+        mDatabase.openRead();
+        mCursor = mDatabase.getTags(LocationService.getParkId(this), TagLocation.this.mTagType);
+        startManagingCursor(mCursor);
+        
+        setListAdapter(new TagAdapter(mCursor));
         
         updateButtons();
         
-        createPhotoDirectory();
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        stopManagingCursor(mCursor);        
+        mCursor.close();
+        mDatabase.close();
+        
+        super.onPause();
     }
 
     private View getListHeader() {
@@ -196,8 +209,6 @@ public class TagLocation extends ListActivity implements LocationListener {
         if (lManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             lManager.removeUpdates(this);
         }
-        
-        mDatabase.close();
         
         super.onDestroy();
     }
@@ -300,9 +311,6 @@ public class TagLocation extends ListActivity implements LocationListener {
                 this.getIntent().putExtra("note", note);
                 recordObservation();
             }
-            break;
-        case ACTIVITY_SETTINGS_COMPLETE:
-            updateButtons();
             break;
         }
     }
@@ -548,7 +556,7 @@ public class TagLocation extends ListActivity implements LocationListener {
             break;
         case SETTINGS_HELP:
             intent = new Intent(this, Settings.class);
-            startActivityForResult(intent, ACTIVITY_SETTINGS_COMPLETE);
+            startActivity(intent);
             break;
         }
         return super.onOptionsItemSelected(item);
@@ -634,7 +642,7 @@ public class TagLocation extends ListActivity implements LocationListener {
         this.getIntent().replaceExtras((Bundle)null);
 
         Log.d(TAG, "tag = " + tag + ", amount = " + amount);
-
+        
         if (TagLocation.this.saveToDatabase(tag,
                 amount, note, filename)) {
             Toast.makeText(this, getString(R.string.invasive_mapped_notice), 5).show();
@@ -679,7 +687,7 @@ public class TagLocation extends ListActivity implements LocationListener {
             final String amounttext = radio_amount.getTag().toString();
 
             // Tag this invasive
-            TagLocation.this.getIntent().putExtra("Type", tagType);
+            TagLocation.this.getIntent().putExtra("Type", mTagType);
             TagLocation.this.getIntent().putExtra("Tag", tagtext);
             TagLocation.this.getIntent().putExtra("amount", amounttext);
             
