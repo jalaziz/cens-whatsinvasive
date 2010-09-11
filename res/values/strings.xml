@@ -77,7 +77,7 @@
 <string name="help_settings_7">Weed or Pest List</string>
 <string name="help_settings_8">You will be automatically notified of any change in the list of top invasives. This option is then required to manually update the list.</string>
 <string name="help_settings_9">Login</string>
-<string name="help_settings_select_park">Select a park to download an invasives list. If GPS is enabled, the list includes only the ten closest parks to your current location.</string>
+<string name="help_settings_select_park">Select a park to download an invasives list. If GPS is enabled, the list includes only the ten closest parks to your current location. Check \"Show All Parks\" to show all the parks.</string>
 <string name="help_settings_title">Settings Help</string>
 <string name="help_tagging_num3">(3)</string>
 <string name="help_tagging_para2">Select the quantity of weeds or pests that you see.</string>
