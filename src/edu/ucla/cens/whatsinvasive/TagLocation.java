@@ -29,6 +29,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.format.Time;
 import android.util.Log;
@@ -143,8 +144,6 @@ public class TagLocation extends ListActivity implements LocationListener {
                 
         getListView().addHeaderView(getListHeader());
         getListView().setOnItemClickListener(new TagItemClickListener());
-        
-        createPhotoDirectory();
     }
 
     @Override
@@ -602,13 +601,14 @@ public class TagLocation extends ListActivity implements LocationListener {
         } else {
             Date date = new Date();
             long time = date.getTime();
-            String fileName = this.getString(R.string.pic_data_path) + "/"
-                    + time + ".jpg";
+            String fileName = this.getString(R.string.files_path) + time + ".jpg";
 
-            this.getIntent().putExtra("filename", fileName);
+            File file = new File(Environment.getExternalStorageDirectory(), fileName);
+            
+            this.getIntent().putExtra("filename", file.getPath());
         
             Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(fileName)));
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
             startActivityForResult(intent, ACTIVITY_CAPTURE_PHOTO);
         }
     }
@@ -648,17 +648,6 @@ public class TagLocation extends ListActivity implements LocationListener {
             Toast.makeText(this, getString(R.string.invasive_mapped_notice), 5).show();
         } else {
             Toast.makeText(this, getString(R.string.invasive_mapping_failed), Toast.LENGTH_LONG).show();
-        }
-    }
-    
-    private void createPhotoDirectory() {
-        File ld = new File(this.getString(R.string.pic_data_path));
-        if (ld.exists()) {
-            if (!ld.isDirectory()) {
-                // TODO Handle exception
-            }
-        } else {
-            ld.mkdir();
         }
     }
     

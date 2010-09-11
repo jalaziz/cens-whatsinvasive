@@ -157,7 +157,6 @@
 <string name="tag_tagged_at ">标记在:  </string>
 <string name="tag_uploaded_on">上传在:  </string>
 <string name="tap_the_park">点击公园</string>
-<string name="thumb_path">/sdcard/whatsinvasive/thumbs</string>
 <string name="update_button_continue">继续</string>
 <string name="update_button_download">下载</string>
 <string name="update_button_download_list">下载列表</string>

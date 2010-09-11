@@ -33,6 +33,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
@@ -543,15 +544,14 @@ public class LocationService extends Service {
                             // Enqueue image for download in other thread and
                             // create local path
                             ThumbnailUpdateThread.Thumbnail thumb = new ThumbnailUpdateThread.Thumbnail();
-                            thumb.path = context.getString(R.string.thumb_path)
-                                    + "/" + imageId + ".jpg";
+                            File file = new File(Environment.getExternalStorageDirectory(), 
+                                    context.getString(R.string.files_path) + "thumbs/" + imageId + ".jpg");
+                            thumb.path = file.getPath();
                             thumb.url = object.getString("imageUrl");
 
                             thumbQueue.add(thumb);
 
-                            tag.imagePath = context
-                                    .getString(R.string.thumb_path)
-                                    + "/" + imageId + ".jpg";
+                            tag.imagePath = file.getPath();
                             tag.areaId = id;
 
                             db.insertTag(tag);
@@ -590,7 +590,8 @@ public class LocationService extends Service {
 
         public void downloadThumbnails() {
             // Make sure output directory exists
-            new File(context.getString(R.string.thumb_path)).mkdirs();
+            new File(Environment.getExternalStorageDirectory(), 
+                    context.getString(R.string.files_path) + "thumbs/").mkdirs();
 
             while (!this.queue.isEmpty()) {
                 Thumbnail thumb = this.queue.remove();

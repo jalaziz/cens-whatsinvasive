@@ -15,6 +15,8 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Environment;
+import edu.ucla.cens.whatsinvasive.R;
 import edu.ucla.cens.whatsinvasive.TagType;
 
 public class TagDatabase {
@@ -37,7 +39,7 @@ public class TagDatabase {
 	private static final String DATABASE_TAGS_TABLE = "tags";
 	private static final String DATABASE_AREAS_TABLE = "areas";
 	
-	private static final int DATABASE_VERSION = 3;
+	private static final int DATABASE_VERSION = 4;
 	
 	public static final long DEMO_PARK_ID = 55;
 	
@@ -333,9 +335,12 @@ public class TagDatabase {
 	
 	private static class DatabaseHelper extends SQLiteOpenHelper
 	{
+	    private final Context mContext;
+	    
 		DatabaseHelper(Context ctx)
 		{
 			super(ctx, DATABASE_NAME, null, DATABASE_VERSION);
+			mContext = ctx;
 		}
 
 		@Override
@@ -396,6 +401,23 @@ public class TagDatabase {
                 cursor.close();
                 
                 db.execSQL("drop table " + DATABASE_TAGS_TABLE + "_old");
+		    }
+		    
+		    if(oldVersion < 4)
+		    {
+		        Cursor cursor = db.query(DATABASE_TAGS_TABLE, new String[]{KEY_ID, KEY_IMAGE_URL}, null, null, null, null, KEY_ORDER);
+                
+                while (cursor.moveToNext()) {                   
+                    ContentValues vals = new ContentValues();
+                    vals.put(TagDatabase.KEY_IMAGE_URL, 
+                            cursor.getString(1).replace("/sdcard/whatsinvasive", 
+                                    new File(Environment.getExternalStorageDirectory(), mContext.getString(R.string.files_path)).getPath()));
+                    
+                    db.update(DATABASE_TAGS_TABLE, vals, KEY_ID+"=?", new String[]{String.valueOf(cursor.getLong(0))});
+                }
+                
+                cursor.close();
+		        
 		    }
 		}		
 	}

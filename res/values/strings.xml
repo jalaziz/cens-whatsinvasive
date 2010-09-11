@@ -129,7 +129,6 @@
 <string name="notice_auto_upload">What\'s Invasive! for Android is designed to automatically upload user data to our What\'s Invasive servers. Would you like to set automatic upload on now? (Note: You can change this value later in Settings)</string>
 <string name="invasive_mapped_notice">Invasive Mapped!\n\nYour observation will be in the Queue for 1 minute before upload.</string>
 <string name="photo">Photo</string>
-<string name="pic_data_path">/sdcard/whatsinvasive</string>
 <string name="please_wait_downloading">Please wait while downloading invasives and thumbnails.</string>
 <string name="please_wait_first_time">Please wait while the invasives list updates for the first time...</string>
 <string name="proximity">Proximity: </string>
@@ -162,7 +161,6 @@
 <string name="tag_tagged_at ">Tagged at:  </string>
 <string name="tag_uploaded_on">Uploaded on:  </string>
 <string name="tap_the_park">Tap the Park</string>
-<string name="thumb_path">/sdcard/whatsinvasive/thumbs</string>
 <string name="update_button_continue">Continue</string>
 <string name="update_button_download">Download</string>
 <string name="update_button_download_list">Download List</string>
@@ -212,4 +210,6 @@
 <string name="toggle_all_parks">Show All Parks</string>
 <string name="login_test_title">Using Preview Mode</string>
 <string name="login_test_msg">While in Preview Mode, you can explore all the feautures of the application. However, you may only submit observations to the DEMO park.\n\nTo select the DEMO park please go to Settings->\"Show parks\" then select DEMO from the list.</string>
+<string name="data_path">/Android/data/edu.ucla.cens.whatsinvasive/</string>
+<string name="files_path">/Android/data/edu.ucla.cens.whatsinvasive/files/</string>
 </resources>
