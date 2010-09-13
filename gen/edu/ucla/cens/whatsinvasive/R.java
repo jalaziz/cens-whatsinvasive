@@ -242,6 +242,8 @@ public final class R {
         public static final int confirm=0x7f080015;
         public static final int credits=0x7f080016;
         public static final int data_path=0x7f0800d3;
+        public static final int dialog_upgrade_directory_message=0x7f0800d6;
+        public static final int dialog_upgrade_directory_title=0x7f0800d5;
         public static final int done=0x7f080017;
         public static final int dontremind=0x7f080018;
         public static final int empty_queue_text=0x7f080019;

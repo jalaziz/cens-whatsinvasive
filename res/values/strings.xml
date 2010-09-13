@@ -212,4 +212,6 @@
 <string name="login_test_msg">While in Preview Mode, you can explore all the feautures of the application. However, you may only submit observations to the DEMO park.\n\nTo select the DEMO park please go to Settings->\"Show parks\" then select DEMO from the list.</string>
 <string name="data_path">/Android/data/edu.ucla.cens.whatsinvasive/</string>
 <string name="files_path">/Android/data/edu.ucla.cens.whatsinvasive/files/</string>
+<string name="dialog_upgrade_directory_title">Moving Data Directory</string>
+<string name="dialog_upgrade_directory_message">Please wait while we upgade the data directory.</string>
 </resources>
