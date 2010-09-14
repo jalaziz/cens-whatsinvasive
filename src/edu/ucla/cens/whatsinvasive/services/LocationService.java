@@ -461,7 +461,7 @@ public class LocationService extends Service {
         @Override
         public void run() {
             UpdateData result = downloadTags(id);
-            this.observable.notifyObservers(result);
+            this.setChanged(result);
         }
 
         protected UpdateData downloadTags(long id) {
