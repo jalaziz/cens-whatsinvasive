@@ -14,16 +14,16 @@ import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import edu.ucla.cens.whatsinvasive.services.LocationService;
-import edu.ucla.cens.whatsinvasive.services.UploadService;
 import edu.ucla.cens.whatsinvasive.services.LocationService.TagUpdateThread;
+import edu.ucla.cens.whatsinvasive.services.UploadService;
 import edu.ucla.cens.whatsinvasive.tools.UpdateThread.UpdateData;
 
 public class Settings extends Activity implements Observer {
@@ -197,6 +197,7 @@ public class Settings extends Activity implements Observer {
 		public void handleMessage(Message msg) {
 			switch(msg.what){
 			case MESSAGE_COMPLETE_TAG:
+			    setProgressBarIndeterminateVisibility(false);
 				showToast(getString(R.string.tag_list_download_complete), Toast.LENGTH_SHORT);
 				break;
 			case MESSAGE_TIMEOUT_TAG:
