@@ -142,8 +142,6 @@ public class Splash extends Activity {
                 delay = SPLASH_TIME - m_time;
             }
             
-            dismissDialog(DIALOG_MOVING_DATA);
-            
             m_handler.postDelayed(new Runnable() {
                 public void run() {
                     startNextActivity();
