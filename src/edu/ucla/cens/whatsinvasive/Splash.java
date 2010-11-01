@@ -172,10 +172,10 @@ public class Splash extends Activity {
             File filesDir = new File(Environment.getExternalStorageDirectory(), getString(R.string.files_path));
             if(!filesDir.exists()) {
                 try {
-                    new File(getString(R.string.data_path), 
+                    new File(new File(Environment.getExternalStorageDirectory(), getString(R.string.data_path)), 
                                 ".nomedia").createNewFile();
-                } catch (IOException e) {
-                }
+                } catch (IOException e) { }
+                
                 if(!filesDir.mkdirs()) {
                     Log.w(TAG, "Unable to create files directory");
                 }
