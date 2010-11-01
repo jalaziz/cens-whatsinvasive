@@ -1,6 +1,7 @@
 package edu.ucla.cens.whatsinvasive;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -29,6 +30,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -49,6 +51,7 @@ import edu.ucla.cens.whatsinvasive.services.LocationService;
 import edu.ucla.cens.whatsinvasive.services.LocationService.TagUpdateThread;
 import edu.ucla.cens.whatsinvasive.services.UploadService;
 import edu.ucla.cens.whatsinvasive.tools.CustomHttpClient;
+import edu.ucla.cens.whatsinvasive.tools.DebugCollector;
 import edu.ucla.cens.whatsinvasive.tools.UpdateThread.UpdateData;
 
 public class WhatsInvasive extends Activity implements Observer {
@@ -81,9 +84,9 @@ public class WhatsInvasive extends Activity implements Observer {
 	protected static final int CHANGE_GPS_SETTINGS_2 = 24;
 	protected static final int BLOCKING_TAG = 312;
 
-	AlertDialog.Builder ad;
-	private ServiceConnection conn;
-	private SharedPreferences m_preferences;
+	private AlertDialog.Builder mAlertDialogBuilder;
+	private ServiceConnection mConn;
+	private SharedPreferences mPreferences;
 	
    private final View.OnClickListener titleClickListener = new View.OnClickListener() {
         public void onClick(View v) {
@@ -144,9 +147,9 @@ public class WhatsInvasive extends Activity implements Observer {
         setContentView(R.layout.main);
         setTitle(R.string.title_whatsinvasive);
         
-        m_preferences = this.getSharedPreferences(PREFERENCES_USER, Activity.MODE_PRIVATE);   
+        mPreferences = this.getSharedPreferences(PREFERENCES_USER, Activity.MODE_PRIVATE);   
 		
-		conn = new ServiceConnection() {  
+		mConn = new ServiceConnection() {  
 			public void onServiceConnected(ComponentName name, IBinder binder) {
 				ITagDatabase service = ITagDatabase.Stub.asInterface(binder);
 
@@ -161,7 +164,7 @@ public class WhatsInvasive extends Activity implements Observer {
 		};
 
 		Intent service = new Intent(this, LocationService.class);        
-		bindService(service, conn, BIND_AUTO_CREATE);
+		bindService(service, mConn, BIND_AUTO_CREATE);
 
 		setupEvents();
 		
@@ -172,14 +175,14 @@ public class WhatsInvasive extends Activity implements Observer {
         }).start();
 
 		// start the upload service to check if there is anything to upload
-		if(m_preferences.getBoolean("uploadServiceOn", true)){
+		if(mPreferences.getBoolean("uploadServiceOn", true)){
 			Intent uploadService = new Intent(this, UploadService.class);
 			this.startService(uploadService);
 		}
 		
 		// Login if needed
-        if(m_preferences.getString("username", null) == null 
-                || m_preferences.getString("password", null) == null) {
+        if(mPreferences.getString("username", null) == null 
+                || mPreferences.getString("password", null) == null) {
             Intent intent = new Intent(this, Login.class);
             
             this.startActivityForResult(intent, ACTIVITY_LOGIN);
@@ -187,9 +190,6 @@ public class WhatsInvasive extends Activity implements Observer {
 	}
   
 	private void checkVersion() {
-	    final SharedPreferences preferences = this.getSharedPreferences(
-                PREFERENCES_USER, Activity.MODE_PRIVATE);
-	    
 	    final String appUrl = getString(R.string.app_url);
 	    String results[] = new String[4];
 	    final long park_id;
@@ -217,18 +217,18 @@ public class WhatsInvasive extends Activity implements Observer {
         if (availableVersion != NO_UPDATE_AVAILABLE) {
             Log.d(TAG, "should update version");
 
-            ad = new AlertDialog.Builder(this);
+            mAlertDialogBuilder = new AlertDialog.Builder(this);
             
             if (availableVersion == UPDATE_REQUIRED)
-                ad.setTitle(getString(R.string.msg_update_new_version_required));
+                mAlertDialogBuilder.setTitle(getString(R.string.msg_update_new_version_required));
             else
-                ad.setTitle(getString(R.string.msg_update_new_version_available));
+                mAlertDialogBuilder.setTitle(getString(R.string.msg_update_new_version_available));
             
-            ad.setMessage(getString(R.string.msg_update_available)
+            mAlertDialogBuilder.setMessage(getString(R.string.msg_update_available)
                     + description + "\n");
             
             if (availableVersion == UPDATE_REQUIRED) {
-                ad.setNegativeButton(
+                mAlertDialogBuilder.setNegativeButton(
                         getString(R.string.update_button_later),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dlg, int which) {
@@ -237,9 +237,9 @@ public class WhatsInvasive extends Activity implements Observer {
                         });
                 
                 if (UNINSTALL_REQUIRED) {
-                    ad.setMessage(getString(R.string.msg_update_please_uninstall)
+                    mAlertDialogBuilder.setMessage(getString(R.string.msg_update_please_uninstall)
                             + description + "\n");
-                    ad.setPositiveButton(
+                    mAlertDialogBuilder.setPositiveButton(
                             getString(R.string.msg_update_uninstall),
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dlg, int which) {
@@ -250,7 +250,7 @@ public class WhatsInvasive extends Activity implements Observer {
                                 }
                             });
                 } else {
-                    ad.setPositiveButton(
+                    mAlertDialogBuilder.setPositiveButton(
                             getString(R.string.update_button_download),
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dlg, int which) {
@@ -261,10 +261,10 @@ public class WhatsInvasive extends Activity implements Observer {
                 }
             } else if (park_id != -1) { // if area_id was specified in the
                                         // update message
-                ad.setNegativeButton(
+                mAlertDialogBuilder.setNegativeButton(
                         getString(R.string.update_button_later),
                         null);
-                ad.setPositiveButton(
+                mAlertDialogBuilder.setPositiveButton(
                         getString(R.string.update_button_download_list),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dlg, int sumthin) {
@@ -280,10 +280,10 @@ public class WhatsInvasive extends Activity implements Observer {
                         });
             } else { // if area_id was not specified in the update message just
                      // update the app
-                ad.setNegativeButton(
+                mAlertDialogBuilder.setNegativeButton(
                         getString(R.string.update_button_later),
                         null);
-                ad.setPositiveButton(
+                mAlertDialogBuilder.setPositiveButton(
                         getString(R.string.update_button_download),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dlg, int sumthin) {
@@ -295,7 +295,7 @@ public class WhatsInvasive extends Activity implements Observer {
             
             handler.post(new Runnable() {
                 public void run() {
-                    ad.show();
+                    mAlertDialogBuilder.show();
                 }
             }); 
         }
@@ -394,9 +394,9 @@ public class WhatsInvasive extends Activity implements Observer {
         TextView textView2 = (TextView) this.findViewById(R.id.TextView02); 
         LinearLayout titleLayout = (LinearLayout) this.findViewById(R.id.LinearLayout01);
         titleLayout.setOnClickListener(titleClickListener);
-        SharedPreferences preferences = this.getSharedPreferences(WhatsInvasive.PREFERENCES_USER, Activity.MODE_PRIVATE);
+        
         String title,title2;
-        if(preferences.getBoolean("locationServiceOn", true)){
+        if(mPreferences.getBoolean("locationServiceOn", true)){
             title2 = getString(R.string.location_setting_auto);
         }
         else{
@@ -414,9 +414,19 @@ public class WhatsInvasive extends Activity implements Observer {
 	@Override
 	public void onDestroy() {
 		Log.d(TAG, "close service connection");
-		m_preferences.edit().putBoolean("gpsOffAlert", true).commit();
+		mPreferences.edit().putBoolean("gpsOffAlert", true).commit();
 		
-		this.unbindService(conn);
+		this.unbindService(mConn);
+		
+		if(mPreferences.getBoolean("debug", false)) {
+    		DebugCollector debug = new DebugCollector(this);
+    		debug.collect();
+    		try {
+                debug.compress(new File(Environment.getExternalStorageDirectory(), "whatsinvasive.zip").getPath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+		}
 		
 		super.onDestroy();
 	}
@@ -429,8 +439,7 @@ public class WhatsInvasive extends Activity implements Observer {
 		// Display user name at bottom of screen
 		TextView textView = (TextView) this.findViewById(R.id.TextView03); 
 		
-		SharedPreferences preferences = this.getSharedPreferences(WhatsInvasive.PREFERENCES_USER, Activity.MODE_PRIVATE);
-		String username_string = preferences.getString("username", "");
+		String username_string = mPreferences.getString("username", "");
 		if(!username_string.equals("")){
 			textView.setText(getString(R.string.login_username) + ": " + username_string);
 		} else textView.setText(getString(R.string.whatsinvasive_notlogged));
@@ -440,7 +449,7 @@ public class WhatsInvasive extends Activity implements Observer {
 		Button button = (Button) findViewById(R.id.ButtonTagWeed);
 		button.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				m_preferences.edit().putBoolean("gpsOffAlert2", true).commit();
+				mPreferences.edit().putBoolean("gpsOffAlert2", true).commit();
 				Intent intent = new Intent(WhatsInvasive.this, TagLocation.class);
 				intent.putExtra("Type", TagType.WEED);
 				WhatsInvasive.this.startActivity(intent);
@@ -450,7 +459,7 @@ public class WhatsInvasive extends Activity implements Observer {
 		button = (Button) findViewById(R.id.ButtonTagBug);
 		button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                m_preferences.edit().putBoolean("gpsOffAlert2", true).commit();
+                mPreferences.edit().putBoolean("gpsOffAlert2", true).commit();
                 Intent intent = new Intent(WhatsInvasive.this, TagLocation.class);
                 intent.putExtra("Type", TagType.BUG);
                 WhatsInvasive.this.startActivity(intent);
@@ -522,7 +531,7 @@ public class WhatsInvasive extends Activity implements Observer {
 			if (resultCode == Activity.RESULT_OK) {
 				checkVersion();
 						
-				m_preferences.edit().putBoolean("firstRun", false).commit();
+				mPreferences.edit().putBoolean("firstRun", false).commit();
 
 				OnClickListener listener2 = new OnClickListener(){
 					public void onClick(DialogInterface dialog, int i) {
@@ -530,10 +539,10 @@ public class WhatsInvasive extends Activity implements Observer {
 
 						switch (i) {
 						case AlertDialog.BUTTON1:
-							m_preferences.edit().putBoolean("uploadServiceOn", true).commit();
+							mPreferences.edit().putBoolean("uploadServiceOn", true).commit();
 							break;
 						case AlertDialog.BUTTON2:
-							m_preferences.edit().putBoolean("uploadServiceOn", false).commit();
+							mPreferences.edit().putBoolean("uploadServiceOn", false).commit();
 							break;
 						}
 						
