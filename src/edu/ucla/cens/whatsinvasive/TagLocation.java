@@ -30,6 +30,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.text.format.Time;
 import android.util.Log;
@@ -100,22 +101,22 @@ public class TagLocation extends ListActivity implements LocationListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        checkGPS();
 
         // Check user preferences
-        mPreferences = this.getSharedPreferences(PREFERENCES_USER,
-                Activity.MODE_PRIVATE);
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        
+        checkGPS();
 
         mTagType = (TagType)TagLocation.this.getIntent().getSerializableExtra("Type");
         
         if(mTagType == null) mTagType = TagType.WEED;
 
         // show tag help on first run
-        if (!mPreferences.getBoolean("Seen Tag Help", false)) {
+        if (!mPreferences.getBoolean("seen_tag_help", false)) {
             Intent help = new Intent(this, HelpImg.class);
             help.putExtra("help type", HelpImg.TAG_HELP);
             startActivity(help);
-            mPreferences.edit().putBoolean("Seen Tag Help", true).commit();
+            mPreferences.edit().putBoolean("seen_tag_help", true).commit();
         }
 
         // requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
@@ -214,30 +215,30 @@ public class TagLocation extends ListActivity implements LocationListener {
 
     private void updateButtons() {
         RadioButton radio_amount = (RadioButton) findViewById(mPreferences
-                .getInt("amountId", mRadioGroup.getCheckedRadioButtonId()));
+                .getInt("amount_id", mRadioGroup.getCheckedRadioButtonId()));
         radio_amount.toggle();
 
         mRadioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                mPreferences.edit().putInt("amountId", checkedId).commit();
+                mPreferences.edit().putInt("amount_id", checkedId).commit();
             }
 
         });
 
-        mPhoto.setChecked(mPreferences.getBoolean("photo", true));
+        mPhoto.setChecked(mPreferences.getBoolean("take_photo", true));
         mPhoto.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mPreferences.edit().putBoolean("photo", mPhoto.isChecked())
+                mPreferences.edit().putBoolean("take_photo", mPhoto.isChecked())
                         .commit();
 
             }
         });
         
-        mNote.setChecked(mPreferences.getBoolean("note", true));
+        mNote.setChecked(mPreferences.getBoolean("take_note", true));
         mNote.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mPreferences.edit().putBoolean("note", mNote.isChecked())
+                mPreferences.edit().putBoolean("take_note", mNote.isChecked())
                         .commit();
 
             }
@@ -343,10 +344,8 @@ public class TagLocation extends ListActivity implements LocationListener {
         LocationManager manager = (LocationManager) TagLocation.this
                 .getSystemService(Context.LOCATION_SERVICE);
 
-        SharedPreferences preferences = TagLocation.this.getSharedPreferences(
-                WhatsInvasive.PREFERENCES_USER, Activity.MODE_PRIVATE);
-        boolean gpsOffAlert = preferences.getBoolean("gpsOffAlert", true);
-        boolean gpsOffAlert2 = preferences.getBoolean("gpsOffAlert2", true);
+        boolean gpsOffAlert = mPreferences.getBoolean("gps_off_alert", true);
+        boolean gpsOffAlert2 = mPreferences.getBoolean("gps_off_alert2", true);
 
         if (gpsOffAlert
                 && gpsOffAlert2
@@ -360,24 +359,16 @@ public class TagLocation extends ListActivity implements LocationListener {
 
                                 public void onClick(DialogInterface dialog,
                                         int which) {
-                                    SharedPreferences preferences = TagLocation.this
-                                            .getSharedPreferences(
-                                                    WhatsInvasive.PREFERENCES_USER,
-                                                    Activity.MODE_PRIVATE);
-                                    preferences.edit().putBoolean(
-                                            "gpsOffAlert2", false).commit();
+                                    mPreferences.edit().putBoolean(
+                                            "gps_off_alert2", false).commit();
                                 }
                             }).setNegativeButton(R.string.dontremind,
                             new OnClickListener() {
 
                                 public void onClick(DialogInterface dialog,
                                         int which) {
-                                    SharedPreferences preferences = TagLocation.this
-                                            .getSharedPreferences(
-                                                    WhatsInvasive.PREFERENCES_USER,
-                                                    Activity.MODE_PRIVATE);
-                                    preferences.edit().putBoolean(
-                                            "gpsOffAlert", false).commit();
+                                    mPreferences.edit().putBoolean(
+                                            "gps_off_alert", false).commit();
                                 }
                             }).create();
 
@@ -457,11 +448,11 @@ public class TagLocation extends ListActivity implements LocationListener {
             // start the upload service if auto upload is on because we now have
             // data to upload
             if (photo_created != -1
-                    && mPreferences.getBoolean("uploadServiceOn", true)) {
+                    && mPreferences.getBoolean("upload_service_on", true)) {
                 Intent service = new Intent(this, UploadService.class);
                 this.startService(service);
 
-                mPreferences.edit().putBoolean("uploadServiceOn", true).commit();
+                mPreferences.edit().putBoolean("upload_service_on", true).commit();
             }
 
             if (photo_created == -1)
@@ -474,14 +465,12 @@ public class TagLocation extends ListActivity implements LocationListener {
     public static boolean isLocationEnabled(final Activity activity) {
         LocationManager manager = (LocationManager) activity
                 .getSystemService(Context.LOCATION_SERVICE);
-        SharedPreferences preferences = activity.getSharedPreferences(
-                WhatsInvasive.PREFERENCES_USER, Activity.MODE_PRIVATE);
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
         
-        if(preferences.getLong("fixedArea", -1) == -1)
-            preferences.edit().putLong("fixedArea", 9).commit();
+        if(preferences.getLong("fixed_area", -1) == -1)
+            preferences.edit().putLong("fixed_area", 9).commit();
 
-        if (!(manager.isProviderEnabled("gps") || manager
-                .isProviderEnabled("network"))) {
+        if (!(manager.isProviderEnabled("gps") || manager.isProviderEnabled("network"))) {
             AlertDialog alert = new AlertDialog.Builder(activity).setTitle(
                     activity.getString(R.string.msg_gps_location_disabled))
                     .setMessage(
@@ -493,9 +482,7 @@ public class TagLocation extends ListActivity implements LocationListener {
                                         int which) {
                                     Intent intent = new Intent(
                                             android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                                    activity
-                                            .startActivityForResult(
-                                                    intent,
+                                    activity.startActivityForResult(intent,
                                                     WhatsInvasive.CHANGE_GPS_SETTINGS_2);
 
                                 }
@@ -506,13 +493,9 @@ public class TagLocation extends ListActivity implements LocationListener {
                                         int which) {
                                     activity
                                             .showDialog(WhatsInvasive.BLOCKING_TAG);
-                                    SharedPreferences preferences = activity
-                                            .getSharedPreferences(
-                                                    WhatsInvasive.PREFERENCES_USER,
-                                                    Activity.MODE_PRIVATE);
-                                    preferences.edit().putBoolean(
-                                            "locationServiceOn", false)
-                                            .commit();
+                                    preferences.edit()
+                                        .putBoolean("location_service_on", false)
+                                        .commit();
                                     Intent intent = new Intent(activity, BlockingTagUpdate.class);
                                     activity.startActivityForResult(intent,
                                             WhatsInvasive.CHANGE_GPS_SETTINGS);

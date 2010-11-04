@@ -1,5 +1,6 @@
 package edu.ucla.cens.whatsinvasive;
 
+import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -8,25 +9,25 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.CheckBoxPreference;
+import android.preference.Preference;
+import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.Window;
-import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 import edu.ucla.cens.whatsinvasive.services.LocationService;
 import edu.ucla.cens.whatsinvasive.services.LocationService.TagUpdateThread;
 import edu.ucla.cens.whatsinvasive.services.UploadService;
 import edu.ucla.cens.whatsinvasive.tools.UpdateThread.UpdateData;
 
-public class Settings extends Activity implements Observer {
+public class Settings extends PreferenceActivity implements Observer {
 	private final int ACTIVITY_AREALIST = 0;
 	private final int ACTIVITY_LOGIN = 2;
 	public static final String PREFERENCES_USER = "user";
@@ -35,100 +36,69 @@ public class Settings extends Activity implements Observer {
 	private static final int MESSAGE_NO_RESPONSE_TAG = 2;
 	private static final int SETTINGS_HELP = 0;
 	protected static final int HELP_IMAGE = 123;
-	private Toast setToast;
-	private SharedPreferences m_preferences;
+	private SharedPreferences mPreferences;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		setContentView(R.layout.settings);
 		setTitle(R.string.title_settings);
 		
-		m_preferences = this.getSharedPreferences(WhatsInvasive.PREFERENCES_USER, Activity.MODE_PRIVATE);
-		
-		setupEvents();
+		// Load the preferences from an XML resource
+        addPreferencesFromResource(R.xml.preferences);
+        
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 	}
 
-	private void setupEvents() {
-		ToggleButton uploadToggle = (ToggleButton) this.findViewById(R.id.ToggleButtonUpload);
-		
-		if(m_preferences.getBoolean("uploadServiceOn", true)) {
-			uploadToggle.setChecked(true);
-		}
-		
-		uploadToggle.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
-				m_preferences.edit().putBoolean("uploadServiceOn", isChecked).commit(); 
-
-				if(!isChecked)
-					Settings.this.stopService(new Intent(Settings.this, UploadService.class));
-				else
-					Settings.this.startService(new Intent(Settings.this, UploadService.class));
-			}});
-		
-		Button refreshButton = (Button)findViewById(R.id.TagRefreshButton);
-		refreshButton.setOnClickListener(new OnClickListener() {
-
-			public void onClick(View v) {	
-				setToast = Toast.makeText(Settings.this, getString(R.string.attempting_download_new_invasive), Toast.LENGTH_SHORT);
-				setToast.show();
-				TagUpdateThread thread = new TagUpdateThread(Settings.this, LocationService.getParkId(Settings.this));
-				thread.getObservable().addObserver(Settings.this);
-				thread.start();
-				setProgressBarIndeterminateVisibility(true);
-			}});	
-		
-		ToggleButton locationToggle = (ToggleButton)findViewById(R.id.ToggleButtonLocation);
-		
-		if(m_preferences.getBoolean("locationServiceOn", true)) {
-			locationToggle.setChecked(true);
-		}
-		
-		locationToggle.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
-				if(isChecked) {
-					m_preferences.edit().putBoolean("locationServiceOn", true).commit();
-					
-					if(!TagLocation.isLocationEnabled(Settings.this)){
-						m_preferences.edit().putBoolean("locationServiceOn", false).commit();
-						
-						buttonView.setChecked(false);
-					}
-				} else {
-					m_preferences.edit().putBoolean("locationServiceOn", false).commit();
-				}
-				
-				Intent service = new Intent(Settings.this, LocationService.class);
-				Settings.this.stopService(service);
-				Settings.this.startService(service);
-			}});
-		
-		Button button = (Button)findViewById(R.id.ButtonLogin);
-		button.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {						
-//				m_preferences.edit().remove("username").commit();
-//				m_preferences.edit().remove("password").commit();	
-//				m_preferences.edit().remove("Seen Tag Help").commit();
-//				m_preferences.edit().remove("firstRun").commit();
-				
-				Intent intent = new Intent(Settings.this, Login.class);
-				Settings.this.startActivityForResult(intent, ACTIVITY_LOGIN);
-			}}
-		);
-		 
-		button = (Button)findViewById(R.id.ButtonParks);
-		button.setOnClickListener(new OnClickListener() {
-    			public void onClick(View v) {
-    				Intent intent = new Intent(Settings.this, AreaList.class);
-    				Settings.this.startActivityForResult(intent, ACTIVITY_AREALIST);
-    			}}
-		);
-	}
+	@Override
+    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
+	    if(preference.getKey().equals("upload_service_on")) {
+	        if(((CheckBoxPreference)preference).isChecked()) {
+	            startService(new Intent(this, UploadService.class));
+	        } else {
+	            stopService(new Intent(this, UploadService.class));
+	        }
+	        return true;
+	    } else if(preference.getKey().equals("location_service_on")) {
+	        if(((CheckBoxPreference)preference).isChecked()) {
+                startService(new Intent(this, LocationService.class));
+            } else {
+                stopService(new Intent(this, LocationService.class));
+            }
+	        return true;
+	    } else if(preference.getKey().equals("select_location")) {
+	        Intent intent = new Intent(this, AreaList.class);
+            startActivityForResult(intent, ACTIVITY_AREALIST);
+	        return true;
+	    } else if(preference.getKey().equals("refresh_lists")) {
+	        showToast(getString(R.string.attempting_download_new_invasive), Toast.LENGTH_SHORT);
+            TagUpdateThread thread = new TagUpdateThread(this, LocationService.getParkId(this));
+            thread.getObservable().addObserver(this);
+            thread.start();
+            //setProgressBarIndeterminateVisibility(true);
+	        return true;
+	    } else if(preference.getKey().equals("reset_login")) {
+	        Intent intent = new Intent(this, Login.class);
+            startActivityForResult(intent, ACTIVITY_LOGIN);
+	        return true;
+	    } else if(preference.getKey().equals("send_debug")) {
+	        File file = new File(Environment.getExternalStorageDirectory(), "whatsinvasive.zip");
+	        
+	        if(!file.exists()) {
+	            showToast(getString(R.string.send_debug_not_collected), Toast.LENGTH_SHORT);
+	        } else {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.putExtra(Intent.EXTRA_EMAIL, getResources().getStringArray(R.array.debug_emails));
+                intent .putExtra(Intent.EXTRA_SUBJECT, 
+                        "Debugging Info for " + mPreferences.getString("username", ""));
+                intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+                intent.setType("application/zip");
+                startActivity(Intent.createChooser(intent, getString(R.string.chooser_send_debug)));
+	        }
+	        return true;
+	    }
+        
+        return super.onPreferenceTreeClick(preferenceScreen, preference);
+    }
 
 	protected void showToast(String text,int length){
 		Toast.makeText(this, text, length).show();
@@ -143,30 +113,27 @@ public class Settings extends Activity implements Observer {
 				} else if(resultCode == AreaList.RESULT_TAGS_SAME) {
 					Toast.makeText(this, getString(R.string.tag_list_use_existing), Toast.LENGTH_SHORT).show();
 				}
+
+				refreshView();
 				
-				ToggleButton locationToggle = (ToggleButton)findViewById(R.id.ToggleButtonLocation);		
-				
-				if(m_preferences.getBoolean("locationServiceOn", true)) {
-		            locationToggle.setChecked(true);
-		        } else {
-		            locationToggle.setChecked(false);
-		        }
 				break;
 			case ACTIVITY_LOGIN:
 				if(resultCode == Activity.RESULT_OK) {
-					m_preferences.edit().putBoolean("firstRun", false).commit();
+					mPreferences.edit().putBoolean("first_run", false).commit();
 					
 					DialogInterface.OnClickListener listener2 = new DialogInterface.OnClickListener(){
 						public void onClick(DialogInterface dialog, int i) {
 							Intent intent = new Intent(Settings.this, HelpImg.class);
 							switch (i) {
 							case AlertDialog.BUTTON1:
-								m_preferences.edit().putBoolean("uploadServiceOn", true).commit();							
-								Settings.this.startActivityForResult(intent, HELP_IMAGE);
+								mPreferences.edit().putBoolean("upload_service_on", true).commit();
+				                refreshView();
+								startActivityForResult(intent, HELP_IMAGE);
 							break;
 							case AlertDialog.BUTTON2:
-								m_preferences.edit().putBoolean("uploadServiceOn", false).commit();						
-								Settings.this.startActivityForResult(intent, HELP_IMAGE);
+								mPreferences.edit().putBoolean("upload_service_on", false).commit();	
+				                refreshView();
+								startActivityForResult(intent, HELP_IMAGE);
 							break;
 							}
 						}
@@ -178,6 +145,7 @@ public class Settings extends Activity implements Observer {
 					dialog.setButton2(getString(R.string.no_thanks), listener2);
 					dialog.show();
 				}
+				
 				break;
 			case HELP_IMAGE:
 				if (resultCode == RESULT_OK) {
@@ -192,7 +160,13 @@ public class Settings extends Activity implements Observer {
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 	
-	private final Handler handler = new Handler() {
+	// Hack method to refresh settings view when we programatically change the settings.
+	private void refreshView() {
+	    getPreferenceScreen().removeAll();
+	    addPreferencesFromResource(R.xml.preferences);
+    }
+
+    private final Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			switch(msg.what){

@@ -19,11 +19,11 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -56,10 +56,14 @@ public class Login extends Activity implements Observer {
 	private final int MESSAGE_AREAS_TIMEOUT = 6;
 	private final int MESSAGE_AREAS_CANCEL = 7;
 	
+	private SharedPreferences mPreferences;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.login);		 
+		
+		mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 		
 		setupEvents();
 	}
@@ -192,16 +196,12 @@ public class Login extends Activity implements Observer {
 					
 					break;
 				case MESSAGE_LOGIN:
-					SharedPreferences preferences = Login.this.getSharedPreferences(WhatsInvasive.PREFERENCES_USER, Activity.MODE_PRIVATE);
-			        
-					Editor edit = preferences.edit();
-					
 					String[] values = (String[]) msg.obj;
 					
-					edit.putString("username", values[0]);
-					edit.putString("password", values[1]);
-					
-					edit.commit();
+					mPreferences.edit()
+					    .putString("username", values[0])
+					    .putString("password", values[1])
+					    .commit();
 					
 					Login.this.dismissDialog(DIALOG_LOGGING);
 					
@@ -304,12 +304,9 @@ public class Login extends Activity implements Observer {
 		        .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        
-                        SharedPreferences preferences = Login.this.getSharedPreferences(WhatsInvasive.PREFERENCES_USER, Activity.MODE_PRIVATE);
-                        
-                        preferences.edit()
-                                   .putBoolean("locationServiceOn", false)
-                                   .putLong("fixedArea", TagDatabase.DEMO_PARK_ID)
+                        mPreferences.edit()
+                                   .putBoolean("location_service_on", false)
+                                   .putLong("fixed_area", TagDatabase.DEMO_PARK_ID)
                                    .commit();
                         
                         updateAreas();
@@ -319,12 +316,10 @@ public class Login extends Activity implements Observer {
 		        .setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        SharedPreferences preferences = Login.this.getSharedPreferences(WhatsInvasive.PREFERENCES_USER, Activity.MODE_PRIVATE);
-                        
-                        Editor edit = preferences.edit();
-                        edit.remove("username");
-                        edit.remove("password");
-                        edit.commit();
+                        mPreferences.edit()
+                            .remove("username")
+                            .remove("password")
+                            .commit();
                     }
                 })
 		        .create();

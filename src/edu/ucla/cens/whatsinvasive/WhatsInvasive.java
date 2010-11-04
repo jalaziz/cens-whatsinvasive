@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -35,6 +36,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -147,7 +149,28 @@ public class WhatsInvasive extends Activity implements Observer {
         setContentView(R.layout.main);
         setTitle(R.string.title_whatsinvasive);
         
-        mPreferences = this.getSharedPreferences(PREFERENCES_USER, Activity.MODE_PRIVATE);   
+        
+        // Change the default exception handler so that we can collect debug information
+        // on an uncaught exception
+        final UncaughtExceptionHandler defaultHandler = Thread.getDefaultUncaughtExceptionHandler();
+        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread thread, Throwable ex) {
+                Log.e("WI UncaughtException", "Error: ", ex);
+                DebugCollector debug = new DebugCollector(WhatsInvasive.this);
+                try {
+                    debug.collectAndCompress(new File(Environment
+                            .getExternalStorageDirectory(), "whatsinvasive.zip")
+                            .getPath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                
+                defaultHandler.uncaughtException(thread, ex);
+            }
+        });
+
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 		
 		mConn = new ServiceConnection() {  
 			public void onServiceConnected(ComponentName name, IBinder binder) {
@@ -175,7 +198,7 @@ public class WhatsInvasive extends Activity implements Observer {
         }).start();
 
 		// start the upload service to check if there is anything to upload
-		if(mPreferences.getBoolean("uploadServiceOn", true)){
+        if (mPreferences.getBoolean("upload_service_on", true)) {
 			Intent uploadService = new Intent(this, UploadService.class);
 			this.startService(uploadService);
 		}
@@ -395,11 +418,10 @@ public class WhatsInvasive extends Activity implements Observer {
         LinearLayout titleLayout = (LinearLayout) this.findViewById(R.id.LinearLayout01);
         titleLayout.setOnClickListener(titleClickListener);
         
-        String title,title2;
-        if(mPreferences.getBoolean("locationServiceOn", true)){
+        String title, title2;
+        if (mPreferences.getBoolean("location_service_on", true)) {
             title2 = getString(R.string.location_setting_auto);
-        }
-        else{
+        } else {
             title2 = getString(R.string.location_setting_manual);
         }
         title = LocationService.getParkTitle(this);
@@ -414,15 +436,16 @@ public class WhatsInvasive extends Activity implements Observer {
 	@Override
 	public void onDestroy() {
 		Log.d(TAG, "close service connection");
-		mPreferences.edit().putBoolean("gpsOffAlert", true).commit();
+        mPreferences.edit().putBoolean("gps_off_alert", true).commit();
 		
 		this.unbindService(mConn);
 		
-		if(mPreferences.getBoolean("debug", false)) {
+        if (mPreferences.getBoolean("debug_mode", false)) {
     		DebugCollector debug = new DebugCollector(this);
-    		debug.collect();
     		try {
-                debug.compress(new File(Environment.getExternalStorageDirectory(), "whatsinvasive.zip").getPath());
+                debug.collectAndCompress(new File(Environment
+                        .getExternalStorageDirectory(), "whatsinvasive.zip")
+                        .getPath());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -449,8 +472,9 @@ public class WhatsInvasive extends Activity implements Observer {
 		Button button = (Button) findViewById(R.id.ButtonTagWeed);
 		button.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				mPreferences.edit().putBoolean("gpsOffAlert2", true).commit();
-				Intent intent = new Intent(WhatsInvasive.this, TagLocation.class);
+                mPreferences.edit().putBoolean("gps_off_alert2", true).commit();
+                Intent intent = new Intent(WhatsInvasive.this,
+                        TagLocation.class);
 				intent.putExtra("Type", TagType.WEED);
 				WhatsInvasive.this.startActivity(intent);
 			}
@@ -459,8 +483,9 @@ public class WhatsInvasive extends Activity implements Observer {
 		button = (Button) findViewById(R.id.ButtonTagBug);
 		button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mPreferences.edit().putBoolean("gpsOffAlert2", true).commit();
-                Intent intent = new Intent(WhatsInvasive.this, TagLocation.class);
+                mPreferences.edit().putBoolean("gps_off_alert2", true).commit();
+                Intent intent = new Intent(WhatsInvasive.this,
+                        TagLocation.class);
                 intent.putExtra("Type", TagType.BUG);
                 WhatsInvasive.this.startActivity(intent);
             }
@@ -531,7 +556,7 @@ public class WhatsInvasive extends Activity implements Observer {
 			if (resultCode == Activity.RESULT_OK) {
 				checkVersion();
 						
-				mPreferences.edit().putBoolean("firstRun", false).commit();
+                mPreferences.edit().putBoolean("first_run", false).commit();
 
 				OnClickListener listener2 = new OnClickListener(){
 					public void onClick(DialogInterface dialog, int i) {
@@ -539,10 +564,14 @@ public class WhatsInvasive extends Activity implements Observer {
 
 						switch (i) {
 						case AlertDialog.BUTTON1:
-							mPreferences.edit().putBoolean("uploadServiceOn", true).commit();
+                            mPreferences.edit()
+                                    .putBoolean("upload_service_on", true)
+                                    .commit();
 							break;
 						case AlertDialog.BUTTON2:
-							mPreferences.edit().putBoolean("uploadServiceOn", false).commit();
+                            mPreferences.edit()
+                                    .putBoolean("upload_service_on", false)
+                                    .commit();
 							break;
 						}
 						

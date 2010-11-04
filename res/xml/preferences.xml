@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<PreferenceCategory android:title="@string/preferences_category_upload">
+		<CheckBoxPreference android:key="upload_service_on"
+			android:title="@string/preferences_title_upload_service_on"
+			android:summary="@string/preferences_summary_upload_service_on"
+			android:defaultValue="true" />
+	</PreferenceCategory>
+
+	<PreferenceCategory android:title="@string/preferences_category_location">
+		<CheckBoxPreference android:key="location_service_on"
+			android:title="@string/preferences_title_location_service_on"
+			android:summary="@string/preferences_summary_location_service_on"
+			android:defaultValue="true" />
+		<Preference android:key="select_location"
+			android:title="@string/preferences_title_select_location"
+			android:summary="@string/preferences_summary_select_location" />
+		<Preference android:key="refresh_lists"
+			android:title="@string/preferences_title_refresh_lists"
+			android:summary="@string/preferences_summary_refresh_lists" />
+	</PreferenceCategory>
+
+	<PreferenceCategory android:title="@string/preferences_category_login">
+		<Preference android:key="reset_login"
+			android:title="@string/preferences_title_reset_login"
+			android:summary="@string/preferences_summary_reset_login" />
+	</PreferenceCategory>
+	
+	<PreferenceCategory android:title="@string/preferences_category_debug">
+		<CheckBoxPreference android:key="debug_mode"
+			android:title="@string/preferences_title_debug_mode"
+			android:summary="@string/preferences_summary_debug_mode"
+			android:defaultValue="false" />
+		<Preference android:key="send_debug"
+			android:title="@string/preferences_title_send_debug"
+			android:summary="@string/preferences_summary_send_debug" />
+	</PreferenceCategory>
+
+</PreferenceScreen>

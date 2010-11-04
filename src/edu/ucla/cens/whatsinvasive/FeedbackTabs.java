@@ -23,7 +23,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -35,12 +34,13 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TabHost;
-import android.widget.TextView;
 import android.widget.TabHost.OnTabChangeListener;
+import android.widget.TextView;
 import edu.ucla.cens.whatsinvasive.services.LocationService;
 import edu.ucla.cens.whatsinvasive.tools.CustomHttpClient;
 
@@ -107,9 +107,7 @@ public class FeedbackTabs extends TabActivity {
                 url += "?area_id="
                         + LocationService.getParkId(FeedbackTabs.this);
 
-                SharedPreferences preferences = FeedbackTabs.this
-                        .getSharedPreferences(WhatsInvasive.PREFERENCES_USER,
-                                Activity.MODE_PRIVATE);
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(FeedbackTabs.this);
                 String username = preferences.getString("username", null);
                 String password = preferences.getString("password", null);
 

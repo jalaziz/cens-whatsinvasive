@@ -140,12 +140,6 @@
 <string name="queue_edit_note">Edit note</string>
 <string name="queue_show_map">Show on map</string>
 <string name="queue_view">View tag</string>
-<string name="settings_auto">Auto-location</string>
-<string name="settings_enable">Enable upload</string>
-<string name="settings_invasive_list">Invasives list</string>
-<string name="settings_refresh">Refresh</string>
-<string name="settings_select">Select location</string>
-<string name="settings_show">Show parks</string>
 <string name="sure">Sure.</string>
 <string name="tag_few">Few</string>
 <string name="tag_list_download_complete">Invasives list download complete.</string>
@@ -214,4 +208,26 @@
 <string name="files_path">/Android/data/edu.ucla.cens.whatsinvasive/files/</string>
 <string name="dialog_upgrade_directory_title">Moving Data Directory</string>
 <string name="dialog_upgrade_directory_message">Please wait while we upgade the data directory.</string>
+
+<string name="preferences_category_upload">Upload</string>
+<string name="preferences_title_upload_service_on">Enable Upload</string>
+<string name="preferences_summary_upload_service_on">Enable or disable the upload service</string>
+<string name="preferences_category_location">Location</string>
+<string name="preferences_title_location_service_on">Enable Auto-Location</string>
+<string name="preferences_summary_location_service_on">Enable or disable the auto-location service.</string>
+<string name="preferences_title_select_location">Select Location</string>
+<string name="preferences_summary_select_location">Change your selected park.</string>
+<string name="preferences_title_refresh_lists">Refresh Lists</string>
+<string name="preferences_summary_refresh_lists">Update to the latest invasives lists</string>
+<string name="preferences_category_login">Login</string>
+<string name="preferences_title_reset_login">Reset Login</string>
+<string name="preferences_summary_reset_login">Change your login credentials.</string>
+<string name="preferences_category_debug">Debugging</string>
+<string name="preferences_title_debug_mode">Debug Mode</string>
+<string name="preferences_summary_debug_mode">Enable the collection of debugging information.</string>
+<string name="preferences_title_send_debug">Send Debug Info</string>
+<string name="preferences_summary_send_debug">Send collection debugging information to the developers.</string>
+
+<string name="chooser_send_debug">Send debugging info...</string>
+<string name="send_debug_not_collected">No debugging info collected.</string>
 </resources>

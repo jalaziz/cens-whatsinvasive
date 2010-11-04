@@ -3,7 +3,6 @@ package edu.ucla.cens.whatsinvasive;
 import java.util.Observable;
 import java.util.Observer;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
@@ -11,13 +10,13 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -73,10 +72,10 @@ public class AreaList extends ListActivity implements Observer {
 		
 		setContentView(R.layout.area_list);
 		
-		mPreferences = this.getSharedPreferences(WhatsInvasive.PREFERENCES_USER, Activity.MODE_PRIVATE);
-		locationServiceOn = mPreferences.getBoolean("locationServiceOn", true);
+		mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+		locationServiceOn = mPreferences.getBoolean("location_service_on", true);
 		
-		mPreferences.edit().putBoolean("locationServiceOn", false).commit();
+		mPreferences.edit().putBoolean("location_service_on", false).commit();
 		
 		mLocManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 		mDatabase = new TagDatabase(this);
@@ -98,7 +97,7 @@ public class AreaList extends ListActivity implements Observer {
                 msg.setData(data);
                 
                 AreaList.this.handler.sendMessage(msg);
-                //editor.putBoolean("locationServiceOn", false).commit();
+                //editor.putBoolean("location_service_on", false).commit();
             }});
 		
 		mAllParks = (CheckBox) findViewById(R.id.check_all);
@@ -187,9 +186,7 @@ public class AreaList extends ListActivity implements Observer {
     {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
         		// User effectively canceled manual selection show return to original mode
-	        	SharedPreferences preferences = AreaList.this.getSharedPreferences(WhatsInvasive.PREFERENCES_USER, Activity.MODE_PRIVATE);
-	
-	        	preferences.edit().putBoolean("locationServiceOn", locationServiceOn).commit();
+	        	mPreferences.edit().putBoolean("location_service_on", locationServiceOn).commit();
 	        	
 	        	this.dismissDialog(DIALOG_DOWNLOAD_AREAS);
 	        	
@@ -283,11 +280,10 @@ public class AreaList extends ListActivity implements Observer {
 		public void handleMessage(Message msg){
 			switch(msg.what){
 				case MESSAGE_DOWNLOAD_TAGS:
-					SharedPreferences preferences = AreaList.this.getSharedPreferences(WhatsInvasive.PREFERENCES_USER, Activity.MODE_PRIVATE);
-					Editor editor = preferences.edit();
-					
-					editor.putString("fixedLocation",  msg.getData().getDouble("latitude") +","+ msg.getData().getDouble("longitude")).commit();
-					editor.putLong("fixedArea", msg.getData().getLong("id")).commit();
+				    mPreferences.edit()
+					    .putString("fixed_location",  msg.getData().getDouble("latitude") +","+ msg.getData().getDouble("longitude"))
+					    .putLong("fixed_area", msg.getData().getLong("id"))
+					    .commit();
 
 					int availableTags = mDatabase.getTagsAvailable(msg.getData().getLong("id"), null);
 

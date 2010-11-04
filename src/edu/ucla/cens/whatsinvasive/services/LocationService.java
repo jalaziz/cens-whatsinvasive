@@ -37,9 +37,9 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import edu.ucla.cens.whatsinvasive.R;
 import edu.ucla.cens.whatsinvasive.TagType;
-import edu.ucla.cens.whatsinvasive.WhatsInvasive;
 import edu.ucla.cens.whatsinvasive.data.ITagDatabase;
 import edu.ucla.cens.whatsinvasive.data.ITagDatabaseCallback;
 import edu.ucla.cens.whatsinvasive.data.TagDatabase;
@@ -57,9 +57,12 @@ public class LocationService extends Service {
     private static LocationManager manager;
 
     private static GpsListener gpsListener;
+    
+    private SharedPreferences mPreferences;
 
     @Override
     public void onCreate() {
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         thread = new MonitorThread(this);
         gpsListener = new GpsListener();
         manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -67,7 +70,6 @@ public class LocationService extends Service {
         manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,
                 gpsListener);
         thread.start();
-
     }
 
     private Location getLastKnownLocation(LocationManager manager) {
@@ -189,8 +191,6 @@ public class LocationService extends Service {
 
         @Override
         public void run() {
-            SharedPreferences preferences = context.getSharedPreferences(
-                    WhatsInvasive.PREFERENCES_USER, Activity.MODE_PRIVATE);
             // We don't want to update the tags every time this is run, maybe we
             // could use the
             // checkVersion() code to notify a user when a new tag list is out
@@ -204,7 +204,7 @@ public class LocationService extends Service {
                 try {
                     updateDistances(getLocation(this.context));
                     
-                    if (preferences.getBoolean("locationServiceOn", true)) {
+                    if (mPreferences.getBoolean("location_service_on", true)) {
                         Thread.sleep(UPDATE_INTERVAL_ON);
                     } else {
                         Thread.sleep(UPDATE_INTERVAL_OFF);
@@ -272,11 +272,11 @@ public class LocationService extends Service {
     public static long getParkId(Context context) {
         long id = -1;
         TagDatabase db = new TagDatabase(context);
-        SharedPreferences preferences = context.getSharedPreferences(
-                WhatsInvasive.PREFERENCES_USER, Activity.MODE_PRIVATE);
+        
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
         // first try to get park by location
-        if (preferences.getBoolean("locationServiceOn", true)
+        if (preferences.getBoolean("location_service_on", true)
                 && m_lastLoc != null) {
             db.openRead();
 
@@ -293,7 +293,7 @@ public class LocationService extends Service {
         // no park has been found, then fall back on a fixed area
         if (id == -1) {
             // Look for a fixed area
-            long fixedArea = preferences.getLong("fixedArea", -1);
+            long fixedArea = preferences.getLong("fixed_area", -1);
 
             // Make sure that area still exists in the list
             db.openRead();
@@ -329,10 +329,13 @@ public class LocationService extends Service {
         private final Location location;
 
         private boolean sync = false;
+        
+        private final SharedPreferences mPreferences;
 
         public AreaUpdateThread(Context context, boolean sync, Location location) {
             super(context, -1);
 
+            mPreferences = PreferenceManager.getDefaultSharedPreferences(context);
             this.sync = sync;
             this.location = location;
         }
@@ -342,9 +345,6 @@ public class LocationService extends Service {
             UpdateData result = downloadAreas(location);
             
             if (sync && result.allDone) {
-                SharedPreferences preferences = context.getSharedPreferences(
-                        WhatsInvasive.PREFERENCES_USER, Activity.MODE_PRIVATE);
-
                 // Default to the top-most area
                 TagDatabase db = new TagDatabase(context);
                 db.openRead();
@@ -359,9 +359,9 @@ public class LocationService extends Service {
 
                 c.close();
 
-                if (!preferences.getBoolean("locationServiceOn", true)) {
+                if (!mPreferences.getBoolean("location_service_on", true)) {
                     // Look for a fixed area
-                    long fixedArea = preferences.getLong("fixedArea", -1);
+                    long fixedArea = mPreferences.getLong("fixed_area", -1);
 
                     // Make sure that area still exists in the list
                     if (db.getArea(id) != null && fixedArea != -1)

@@ -16,6 +16,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.Window;
@@ -41,10 +42,13 @@ public class Splash extends Activity {
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.splash);
+        
+        // Set default preferences
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
-        SharedPreferences preferences = this.getSharedPreferences(WhatsInvasive.PREFERENCES_USER, Activity.MODE_PRIVATE);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        m_firstRun = preferences.getBoolean("firstRun", true);		
+        m_firstRun = preferences.getBoolean("first_run", true);		
         m_return = getIntent().getBooleanExtra("return", false);
         
         m_upgradeTask = new UpgradeDataDirectoryTask();

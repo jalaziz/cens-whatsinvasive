@@ -53,6 +53,11 @@ public class DebugCollector {
         Compress.compress(mDebugDirectory, filename);
     }
     
+    public void collectAndCompress(String filename) throws IOException {
+        collect();
+        compress(filename);
+    }
+    
     private class DatabaseExportThread extends Thread {
         @Override
         public void run() {

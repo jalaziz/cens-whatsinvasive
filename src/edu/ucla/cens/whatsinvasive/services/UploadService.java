@@ -21,7 +21,6 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.message.BasicNameValuePair;
 
-import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -29,6 +28,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
 import edu.ucla.cens.whatsinvasive.R;
@@ -108,7 +108,7 @@ public class UploadService extends Service {
 					
 					Log.d(TAG, "Points to submit: "+ Integer.toString(photoentries.size()));
 					
-					SharedPreferences preferences = UploadService.this.getSharedPreferences(WhatsInvasive.PREFERENCES_USER, Activity.MODE_PRIVATE);
+					SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(UploadService.this);
 			        String username = preferences.getString("username", null);
 			        String password = preferences.getString("password", null);
 			        
