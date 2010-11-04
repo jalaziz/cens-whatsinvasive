@@ -72,7 +72,7 @@ public class TagLocation extends ListActivity implements LocationListener {
 
     private static final int MENU_HELP = 0;
 
-    protected static final String TAG = "Tag Location";
+    protected static final String TAG = "TagLocation";
 
     private static final int QUEUE_SCREEN = 323;
 
@@ -101,6 +101,8 @@ public class TagLocation extends ListActivity implements LocationListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(R.string.title_taglocation);
+        setContentView(R.layout.tag_location);
 
         // Check user preferences
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -110,18 +112,18 @@ public class TagLocation extends ListActivity implements LocationListener {
         mTagType = (TagType)TagLocation.this.getIntent().getSerializableExtra("Type");
         
         if(mTagType == null) mTagType = TagType.WEED;
+        
+        Log.d(TAG, "Tag Type = " + mTagType.toString());
 
         // show tag help on first run
         if (!mPreferences.getBoolean("seen_tag_help", false)) {
+            Log.d(TAG, "Showing Tag Help...");
+            
             Intent help = new Intent(this, HelpImg.class);
             help.putExtra("help type", HelpImg.TAG_HELP);
             startActivity(help);
             mPreferences.edit().putBoolean("seen_tag_help", true).commit();
         }
-
-        // requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
-        setTitle(R.string.title_taglocation);
-        setContentView(R.layout.tag_location);
         
         mRadioGroup = (RadioGroup) findViewById(R.id.radio_group);
         mPhoto = (CheckBox) findViewById(R.id.with_photo);
@@ -129,14 +131,16 @@ public class TagLocation extends ListActivity implements LocationListener {
 
         LocationManager lManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        if (!lManager.isProviderEnabled("gps")) {
+        if (!lManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            Log.d(TAG, "GPS is not enabled");
             setTitle(R.string.title_taglocation_no_gps);
-            if (!lManager.isProviderEnabled("network")) {
+            
+            if (!lManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                Log.d(TAG, "Network Location is not enabled");
                 setTitle(R.string.title_taglocation_all_disabled);
             }
-        }
-
-        if (lManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        } else {
+            Log.d(TAG, "Requesting GPS location updates");
             lManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                     GPS_POLL_INTERVAL, 0, this);
         }
@@ -149,6 +153,8 @@ public class TagLocation extends ListActivity implements LocationListener {
 
     @Override
     protected void onResume() {
+        Log.d(TAG, "Opening database");
+        
         mDatabase.openRead();
         mCursor = mDatabase.getTags(LocationService.getParkId(this), TagLocation.this.mTagType);
         startManagingCursor(mCursor);
@@ -162,6 +168,8 @@ public class TagLocation extends ListActivity implements LocationListener {
 
     @Override
     protected void onPause() {
+        Log.d(TAG, "Closing cursor and database");
+        
         stopManagingCursor(mCursor);        
         mCursor.close();
         mDatabase.close();
@@ -207,6 +215,7 @@ public class TagLocation extends ListActivity implements LocationListener {
     public void onDestroy() {
         LocationManager lManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (lManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            Log.d(TAG, "Removing GPS Location update listener");
             lManager.removeUpdates(this);
         }
         
@@ -221,6 +230,7 @@ public class TagLocation extends ListActivity implements LocationListener {
         mRadioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
             public void onCheckedChanged(RadioGroup group, int checkedId) {
+                Log.i(TAG, "Amount = " + checkedId);
                 mPreferences.edit().putInt("amount_id", checkedId).commit();
             }
 
@@ -229,6 +239,7 @@ public class TagLocation extends ListActivity implements LocationListener {
         mPhoto.setChecked(mPreferences.getBoolean("take_photo", true));
         mPhoto.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                Log.i(TAG, "Photo enabled = " + mPhoto.isChecked());
                 mPreferences.edit().putBoolean("take_photo", mPhoto.isChecked())
                         .commit();
 
@@ -238,6 +249,7 @@ public class TagLocation extends ListActivity implements LocationListener {
         mNote.setChecked(mPreferences.getBoolean("take_note", true));
         mNote.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                Log.i(TAG, "Note enabled = " + mNote.isChecked());
                 mPreferences.edit().putBoolean("take_note", mNote.isChecked())
                         .commit();
 
@@ -262,6 +274,8 @@ public class TagLocation extends ListActivity implements LocationListener {
                     int factor = Math.max(options.outWidth / MAX_IMAGE_WIDTH, 
                             options.outHeight / MAX_IMAGE_HEIGHT);
                     
+                    Log.d(TAG, "Image scaling factor = " + factor);
+                    
                     options.inSampleSize = msb32(factor);                    
                     options.inPurgeable = true;
                     options.inInputShareable = true;
@@ -284,8 +298,11 @@ public class TagLocation extends ListActivity implements LocationListener {
                     scaledImage.compress(CompressFormat.JPEG, 80, os);
                     os.close();
                 } catch (FileNotFoundException e) {
+                    Log.e(TAG, "File not found!", e);
                 } catch (IOException e) {
+                    Log.e(TAG, "IO Exception:", e);
                 } catch (OutOfMemoryError e) {
+                    Log.e(TAG, "Out of memory!", e);
                     new AlertDialog.Builder(this)
                         .setTitle(R.string.out_of_memory_title)
                         .setMessage(R.string.out_of_memory_photo_msg)
@@ -441,6 +458,7 @@ public class TagLocation extends ListActivity implements LocationListener {
             // Lets add it to a DB (the filename will be NULL if no picture was
             // taken)
             pdb.open();
+            Log.d(TAG, "Adding observation to the database");
             long photo_created = pdb.createPhoto(longitude, latitude, time,
                     filename, tag, LocationService.getParkId(this), amount, note, mTagType.value());
             pdb.close();
@@ -449,6 +467,7 @@ public class TagLocation extends ListActivity implements LocationListener {
             // data to upload
             if (photo_created != -1
                     && mPreferences.getBoolean("upload_service_on", true)) {
+                Log.d(TAG, "Starting Upload Service");
                 Intent service = new Intent(this, UploadService.class);
                 this.startService(service);
 
@@ -580,6 +599,7 @@ public class TagLocation extends ListActivity implements LocationListener {
     private void capturePhoto() 
     {
         if (!mPhoto.isChecked()) {
+            Log.d(TAG, "No photo!");
             captureNote();
         } else {
             Date date = new Date();
@@ -589,7 +609,9 @@ public class TagLocation extends ListActivity implements LocationListener {
             File file = new File(Environment.getExternalStorageDirectory(), fileName);
             
             this.getIntent().putExtra("filename", file.getPath());
+            Log.i(TAG, "Photo filename = " + file.getPath());
         
+            Log.d(TAG, "Starting camera activity...");
             Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
             intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
             startActivityForResult(intent, ACTIVITY_CAPTURE_PHOTO);
@@ -599,9 +621,10 @@ public class TagLocation extends ListActivity implements LocationListener {
     private void captureNote() 
     {
         if(!mNote.isChecked()) {
+            Log.d(TAG, "No note!");
             recordObservation();
         } else {
-            
+            Log.d(TAG, "Starting note activity...");
             Intent intent = new Intent(this, NoteEdit.class);
             String title = getString(R.string.note_title_prefix) + " " + getIntent().getStringExtra("Tag");
             intent.putExtra("title", title);
@@ -624,7 +647,7 @@ public class TagLocation extends ListActivity implements LocationListener {
         // Erase the extras for the next observation
         this.getIntent().replaceExtras((Bundle)null);
 
-        Log.d(TAG, "tag = " + tag + ", amount = " + amount);
+        Log.d(TAG, "Recodring observation: tag = " + tag + ", amount = " + amount);
         
         if (TagLocation.this.saveToDatabase(tag,
                 amount, note, filename)) {
@@ -648,6 +671,7 @@ public class TagLocation extends ListActivity implements LocationListener {
             
             if(username.equals("test") && password.equals("test") 
                     && LocationService.getParkId(TagLocation.this) != TagDatabase.DEMO_PARK_ID) {
+                Log.i(TAG, "Cannot tag observations for non-DEMO parks while in demo mode");
                 TagLocation.this.showDialog(DIALOG_TEST_LOGIN);
                 return;
             }
