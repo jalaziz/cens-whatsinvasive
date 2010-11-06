@@ -10,12 +10,12 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
@@ -40,6 +40,7 @@ public class TagHelp extends Activity {
     
     private TagDatabase m_db;
     private int m_id;
+    private TagType m_type;
     private Vector<Integer> m_ids;
 	
 	@Override
@@ -99,6 +100,7 @@ public class TagHelp extends Activity {
 		m_rightView.setOnTouchListener(m_gestureListener);
 		
 		m_id = this.getIntent().getIntExtra("id", -1);
+		m_type = (TagType)this.getIntent().getSerializableExtra("type");
 		
 		m_db = new TagDatabase(this);
 		m_db.openRead();
@@ -108,7 +110,7 @@ public class TagHelp extends Activity {
     protected void onResume() {
         super.onResume();
         
-        m_ids = m_db.getAreaTagIDsFromTagID(m_id);
+        m_ids = m_db.getAreaTagIDsFromTagID(m_id, m_type);
         
         loadView(m_leftView, getNextId(-1));
         loadView(m_centerView, m_id);

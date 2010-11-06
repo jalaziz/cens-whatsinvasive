@@ -777,6 +777,7 @@ public class TagLocation extends ListActivity implements LocationListener {
                     Intent intent = new Intent(TagLocation.this,
                             TagHelp.class);
                     intent.putExtra("id", data.id);
+                    intent.putExtra("type", TagLocation.this.mTagType);
 
                     TagLocation.this.startActivity(intent);
                 }

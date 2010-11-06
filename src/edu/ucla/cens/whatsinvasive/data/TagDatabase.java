@@ -213,13 +213,23 @@ public class TagDatabase {
 		return available;
 	}
 	
-	public Vector<Integer> getAreaTagIDsFromTagID(int tagID){
+	public Vector<Integer> getAreaTagIDsFromTagID(int tagID, TagType type){
 		Cursor b = db.query(DATABASE_TAGS_TABLE, new String[]{KEY_AREA_ID}, KEY_ID + "=?",new String[]{String.valueOf(tagID)}, null, null, null);
 		b.moveToNext();
 		int areaId = b.getInt(b.getColumnIndex(KEY_AREA_ID));			
 		b.close();
 		
-		Cursor c = db.query(DATABASE_TAGS_TABLE, new String[]{KEY_ID}, KEY_AREA_ID + "=?",new String[]{String.valueOf(areaId)}, null, null, KEY_ORDER);
+		String where = KEY_AREA_ID + "=?";
+        String[] whereargs;
+        
+        if(type == null) {
+            whereargs = new String[]{String.valueOf(areaId)};
+        } else {
+            where += " AND " + KEY_TYPE_ID + "=?";
+            whereargs = new String[]{String.valueOf(areaId), String.valueOf(type.value())};
+        }
+		
+		Cursor c = db.query(DATABASE_TAGS_TABLE, new String[]{KEY_ID}, where, whereargs, null, null, KEY_ORDER);
 		Vector<Integer> keys = new Vector<Integer>();
 		
 		while(c.moveToNext()){					
