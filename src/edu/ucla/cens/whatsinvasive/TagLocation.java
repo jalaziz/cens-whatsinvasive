@@ -647,7 +647,7 @@ public class TagLocation extends ListActivity implements LocationListener {
         // Erase the extras for the next observation
         this.getIntent().replaceExtras((Bundle)null);
 
-        Log.d(TAG, "Recodring observation: tag = " + tag + ", amount = " + amount);
+        Log.d(TAG, "Recording observation: tag = " + tag + ", amount = " + amount);
         
         if (TagLocation.this.saveToDatabase(tag,
                 amount, note, filename)) {
