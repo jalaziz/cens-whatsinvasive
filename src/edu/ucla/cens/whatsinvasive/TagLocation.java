@@ -262,10 +262,26 @@ public class TagLocation extends ListActivity implements LocationListener {
         switch (requestCode) {
         case ACTIVITY_CAPTURE_PHOTO:
             if (resultCode == Activity.RESULT_OK) {
+                Log.d(TAG, "Returned OK from Camera activity");
                 
                 final String fileName = this.getIntent().getStringExtra("filename");
-
+                File file = new File(fileName);
+                Bitmap image = null;
+                
                 try {
+                    // Fix for HTC Sense Camera
+                    // If "data" is not null, then we need to save that bitmap
+                    // before we scale it
+                    if(data != null)
+                        image = (Bitmap)data.getExtras().get("data");
+                    
+                    if(image != null && !file.exists()) {
+                        Log.d(TAG, "HTC Camera, creating file from data");
+                        OutputStream os = new FileOutputStream(file);
+                        image.compress(CompressFormat.JPEG, 100, os);
+                        os.close();
+                    }
+                    
                     BitmapFactory.Options options = new BitmapFactory.Options();
                     
                     options.inJustDecodeBounds= true;
@@ -274,29 +290,44 @@ public class TagLocation extends ListActivity implements LocationListener {
                     int factor = Math.max(options.outWidth / MAX_IMAGE_WIDTH, 
                             options.outHeight / MAX_IMAGE_HEIGHT);
                     
+                    if(factor == 0)
+                        factor = 1;
+                    
                     Log.d(TAG, "Image scaling factor = " + factor);
                     
                     options.inSampleSize = msb32(factor);                    
                     options.inPurgeable = true;
                     options.inInputShareable = true;
                     options.inJustDecodeBounds= false;
-                    Bitmap image = BitmapFactory.decodeFile(fileName, options);
+                    image = BitmapFactory.decodeFile(fileName, options);
                     Bitmap scaledImage;
                     
-                    if(image.getWidth() > MAX_IMAGE_WIDTH || image.getHeight() > MAX_IMAGE_HEIGHT) {
-                        float scale = Math.min(MAX_IMAGE_WIDTH/(float)image.getWidth(), 
-                                MAX_IMAGE_HEIGHT/(float)image.getHeight());
-                        int newWidth = (int) ((image.getWidth() * scale) + 0.5f);
-                        int newHeight = (int) ((image.getHeight() * scale) + 0.5f);
-                        scaledImage = Bitmap.createScaledBitmap(image, newWidth, newHeight, true);
-                        image.recycle();
-                    } else {
-                        scaledImage = image;
+                    if(image == null) {
+                        Log.e(TAG, "File '" + fileName + "' cannot be decoded into a Bitmap!");
+                    } else {  
+                        if(image.getWidth() > MAX_IMAGE_WIDTH || image.getHeight() > MAX_IMAGE_HEIGHT) {
+                            float scale = Math.min(MAX_IMAGE_WIDTH/(float)image.getWidth(), 
+                                    MAX_IMAGE_HEIGHT/(float)image.getHeight());
+                            int newWidth = (int) ((image.getWidth() * scale) + 0.5f);
+                            int newHeight = (int) ((image.getHeight() * scale) + 0.5f);
+                            
+                            Log.i(TAG, "Scaling bitmap: width=" + newWidth + ", height=" + newHeight);
+                            
+                            scaledImage = Bitmap.createScaledBitmap(image, newWidth, newHeight, true);
+                            image.recycle();
+                        } else {
+                            // Since the original image was "purgeable"
+                            // we have to reload the all bitmap data into memory
+                            // or we'll erase the file when we write it back out
+                            image.recycle();
+                            scaledImage = BitmapFactory.decodeFile(fileName);
+                        }
+                        
+                        file = new File(fileName);
+                        OutputStream os = new FileOutputStream(file);
+                        scaledImage.compress(CompressFormat.JPEG, 80, os);
+                        os.close();
                     }
-                    
-                    OutputStream os = new FileOutputStream(fileName);
-                    scaledImage.compress(CompressFormat.JPEG, 80, os);
-                    os.close();
                 } catch (FileNotFoundException e) {
                     Log.e(TAG, "File not found!", e);
                 } catch (IOException e) {
