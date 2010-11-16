@@ -29,12 +29,12 @@ public class Splash extends Activity {
     
     private static final int SPLASH_TIME = 2000;
     
-    private boolean m_firstRun = false;
-    private boolean m_return;
-    private final Handler m_handler = new Handler();
+    private boolean mFirstRun = false;
+    private boolean mReturn;
+    private final Handler mHandler = new Handler();
     
-    private UpgradeDataDirectoryTask m_upgradeTask;
-    private ProgressDialog m_upgradeDialog;
+    private UpgradeDataDirectoryTask mUpgradeTask;
+    private ProgressDialog mUpgradeDialog;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,25 +48,25 @@ public class Splash extends Activity {
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        m_firstRun = preferences.getBoolean("first_run", true);		
-        m_return = getIntent().getBooleanExtra("return", false);
+        mFirstRun = preferences.getBoolean("first_run", true);		
+        mReturn = getIntent().getBooleanExtra("return", false);
         
-        m_upgradeTask = new UpgradeDataDirectoryTask();
-        m_upgradeTask.execute((Void)null);
+        mUpgradeTask = new UpgradeDataDirectoryTask();
+        mUpgradeTask.execute((Void)null);
     }
 
     @Override
     protected Dialog onCreateDialog(int id) {
         switch(id) {
         case DIALOG_MOVING_DATA:
-            m_upgradeDialog = new ProgressDialog(this);
-            m_upgradeDialog.setMax(100);
-            m_upgradeDialog.setTitle(R.string.dialog_upgrade_directory_title);
-            m_upgradeDialog.setMessage(getString(R.string.dialog_upgrade_directory_message));
-            m_upgradeDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            m_upgradeDialog.setCancelable(false);
+            mUpgradeDialog = new ProgressDialog(this);
+            mUpgradeDialog.setMax(100);
+            mUpgradeDialog.setTitle(R.string.dialog_upgrade_directory_title);
+            mUpgradeDialog.setMessage(getString(R.string.dialog_upgrade_directory_message));
+            mUpgradeDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            mUpgradeDialog.setCancelable(false);
             
-            return m_upgradeDialog;
+            return mUpgradeDialog;
         }
         
         return super.onCreateDialog(id);
@@ -76,7 +76,7 @@ public class Splash extends Activity {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN 
-                && m_upgradeTask.getStatus() == AsyncTask.Status.FINISHED) {
+                && mUpgradeTask.getStatus() == AsyncTask.Status.FINISHED) {
             startNextActivity();
         }
         return true;
@@ -88,8 +88,8 @@ public class Splash extends Activity {
         if(Splash.this.isFinishing())
             return;
         
-        if(!m_return) {
-            if(m_firstRun) {
+        if(!mReturn) {
+            if(mFirstRun) {
                 intent = new Intent(this, Welcomer.class);
             } else {
                 intent = new Intent(this, WhatsInvasive.class); 
@@ -132,7 +132,7 @@ public class Splash extends Activity {
                 dismissDialog(DIALOG_MOVING_DATA);
                 break;
             default:
-                m_upgradeDialog.setProgress(progress[0]);
+                mUpgradeDialog.setProgress(progress[0]);
             }
         }
 
@@ -146,7 +146,7 @@ public class Splash extends Activity {
                 delay = SPLASH_TIME - m_time;
             }
             
-            m_handler.postDelayed(new Runnable() {
+            mHandler.postDelayed(new Runnable() {
                 public void run() {
                     startNextActivity();
                 }
@@ -155,11 +155,13 @@ public class Splash extends Activity {
         }
         
         private void upgradeDirectory() {
+            Log.i(TAG, "Upgrading data directory location");
             File oldDir = new File("/sdcard/whatsinvasive/");
             File filesDir = new File(Environment.getExternalStorageDirectory(), getString(R.string.files_path));
             if(!filesDir.exists()) {
                 try {
-                    new File(getString(R.string.data_path),
+                    Log.i(TAG, "Creating files directory and .nomedia file at: " + filesDir.getPath());
+                    new File(filesDir,
                                 ".nomedia").createNewFile();
                 } catch (IOException e) {
                 }
@@ -176,7 +178,8 @@ public class Splash extends Activity {
             File filesDir = new File(Environment.getExternalStorageDirectory(), getString(R.string.files_path));
             if(!filesDir.exists()) {
                 try {
-                    new File(new File(Environment.getExternalStorageDirectory(), getString(R.string.data_path)), 
+                    Log.i(TAG, "Creating files directory and .nomedia file at: " + filesDir.getPath());
+                    new File(filesDir, 
                                 ".nomedia").createNewFile();
                 } catch (IOException e) { }
                 
