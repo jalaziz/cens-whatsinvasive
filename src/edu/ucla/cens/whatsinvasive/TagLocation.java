@@ -194,7 +194,7 @@ public class TagLocation extends ListActivity implements LocationListener {
         info.setTextColor(getResources().getColor(R.color.white));
         
         View divider = new View(this);
-        divider.setBackgroundResource(R.drawable.divider_vertical_light);
+        divider.setBackgroundResource(R.drawable.divider_light);
         divider.setLayoutParams(new LinearLayout.LayoutParams(1, LayoutParams.FILL_PARENT));
         
         TextView observation = new TextView(this);

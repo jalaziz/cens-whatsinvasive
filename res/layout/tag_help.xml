@@ -1,11 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView android:id="@+id/ScrollView01"
 	android:layout_width="fill_parent" android:layout_height="fill_parent"
-	xmlns:android="http://schemas.android.com/apk/res/android" android:isScrollContainer="true" >
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:isScrollContainer="true">
 	<LinearLayout android:id="@+id/LinearLayout01"
-		android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="10px">
-		<ImageView android:id="@+id/ImageView01" android:layout_width="wrap_content" android:layout_height="wrap_content"></ImageView>
-		<TextView android:text="TextView01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:id="@+id/title"></TextView><TextView android:text="TextView01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/science_name" android:textAppearance="?android:attr/textAppearanceLarge" android:textStyle="italic"></TextView><TextView android:text="TextView01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium" android:id="@+id/common_names"></TextView>
-		<TextView android:text="TextView02" android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/description" android:layout_marginTop="10dp" android:textAppearance="?android:attr/textAppearanceMedium"></TextView>
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:orientation="vertical" android:padding="10dp">
+		<ImageView android:id="@+id/ImageView01"
+			android:layout_width="fill_parent" android:layout_height="wrap_content" 
+			android:adjustViewBounds="true"></ImageView>
+		<TextView android:text="TextView01" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge"
+			android:id="@+id/title"></TextView>
+		<TextView android:text="TextView01" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/science_name"
+			android:textAppearance="?android:attr/textAppearanceLarge"
+			android:textStyle="italic"></TextView>
+		<TextView android:text="TextView01" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium"
+			android:id="@+id/common_names"></TextView>
+		<TextView android:text="TextView02" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/description"
+			android:layout_marginTop="10dp" android:textAppearance="?android:attr/textAppearanceMedium"></TextView>
 	</LinearLayout>
 </ScrollView>

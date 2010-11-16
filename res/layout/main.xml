@@ -1,24 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical" android:layout_width="fill_parent"
-	android:layout_height="fill_parent" android:background="@color/green"
-	android:gravity="center_horizontal" android:padding="10px">
-	<!-- original green was #0f2300 -->
-	<ImageView android:id="@+id/ImageView01"
-		android:src="@drawable/logo" android:clickable="true" android:focusable="true" android:scaleType="fitCenter" android:layout_width="wrap_content" android:layout_height="wrap_content"></ImageView>
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
 
-	<LinearLayout android:id="@+id/LinearLayout01" android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:padding="10dp"><TextView android:textAppearance="?android:attr/textAppearanceLarge" android:id="@+id/TextView01" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/no_park_selected" android:clickable="true" android:focusable="true" android:layout_gravity="center"></TextView><TextView android:text="TextView02" android:id="@+id/TextView02" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:textSize="18px"></TextView></LinearLayout>
-		
-	<Button android:text="@string/main_button_mapweed" android:id="@+id/ButtonTagWeed" android:layout_width="200dp" android:layout_height="60dp" android:layout_marginTop="5dp" android:layout_marginBottom="2.5dp" android:textSize="20sp" android:drawableLeft="@drawable/plant_icon"></Button>
-	<Button android:id="@+id/ButtonTagBug" android:text="@string/main_button_mapbug" android:layout_height="60dp" android:layout_marginBottom="10dp" android:layout_width="200dp" android:layout_marginTop="2.5dp" android:textSize="20sp" android:drawableLeft="@drawable/pest_icon"></Button><Button android:text="@string/main_button_results" android:id="@+id/ButtonMy"
-		android:layout_height="wrap_content"
-		android:background="@drawable/green_button" android:textColor="@color/yellow" android:layout_marginBottom="8dp" android:textSize="20dp" android:padding="10dp" android:layout_width="200dp"></Button><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:clickable="false" android:focusable="false" android:textSize="18px" android:id="@+id/TextView03" android:text="Username: not set"></TextView>
-<!-- 	<Button android:text="List of Weeds" android:id="@+id/ButtonList"
-		android:minWidth="250px" android:layout_width="wrap_content"
-		android:padding="10px"
-		android:layout_height="wrap_content" android:textSize="20px" android:background="@drawable/green_button" android:textColor="@color/yellow"></Button>
--->
+    <LinearLayout style="@style/Titlebar">
+        <ImageView style="@style/TitlebarLogo" android:src="@drawable/title_logo" 
+        	android:onClick="onLogoClick" />
+		<View style="@style/LayoutSpacer"/>
+        <ImageView style="@style/TitlebarSeparator"/>
+        <TextView android:id="@+id/Username"
+        	style="@style/TitlebarText"       
+			android:text="@string/whatsinvasive_notlogged"/>
+    </LinearLayout>
 
-
-
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:paddingBottom="8dp">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+            <Button android:id="@+id/ButtonTagWeed"
+                style="@style/HomeButton"
+                android:onClick="onTagWeedClick"
+                android:text="@string/main_button_mapweed"
+                android:textStyle="bold"
+                android:drawableTop="@drawable/plant_icon"/>
+            <Button android:id="@+id/ButtonTagPest"
+                style="@style/HomeButton"
+                android:onClick="onTagPestClick"
+                android:text="@string/main_button_mappest"
+                android:textStyle="bold"
+                android:drawableTop="@drawable/pest_icon"/>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+            <Button android:id="@+id/ButtonMap"
+                style="@style/HomeButton"
+                android:onClick="onMapClick"
+                android:text="@string/main_button_map"
+                android:focusable="false"
+                android:drawableTop="@drawable/map_disabled"/>
+            <Button android:id="@+id/ButtonResults"
+                style="@style/HomeButton"
+                android:onClick="onResultsClick"
+                android:text="@string/main_button_results"
+                android:drawableTop="@drawable/results_icon"/>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+            <Button android:id="@+id/ButtonNews"
+                style="@style/HomeButton"
+                android:onClick="onNewsClick"
+                android:text="@string/main_button_news"
+                android:focusable="false"
+                android:drawableTop="@drawable/news_disabled"/>
+            <Button android:id="@+id/ButtonWeedOfTheWeek"
+                style="@style/HomeButton"
+                android:onClick="onWeedOfTheWeekClick"
+                android:text="@string/main_button_iotw"
+                android:focusable="false"
+                android:drawableTop="@drawable/iotw_disabled"/>
+        </LinearLayout>
+    </LinearLayout>
+    
+    <LinearLayout style="@style/Footer">
+    	<LinearLayout android:orientation="horizontal"
+    		android:layout_width="wrap_content" android:layout_height="wrap_content">
+	    	<TextView android:id="@+id/Location"
+	    		android:clickable="true" android:onClick="onLocationClick"
+	    		android:textColor="@color/white" android:textSize="@dimen/text_medium" 
+	    		android:text="@string/no_park_selected"
+				android:layout_width="wrap_content" android:layout_height="wrap_content" />
+			<View android:layout_width="4dp" android:layout_height="fill_parent" />
+			<TextView android:id="@+id/LocationServiceStatus" android:text="TextView02"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:textSize="@dimen/text_small"/>
+		</LinearLayout>
+    </LinearLayout>
 </LinearLayout>

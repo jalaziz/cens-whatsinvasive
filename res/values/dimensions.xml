@@ -3,4 +3,9 @@
 	<dimen name="twofour_sp">24sp</dimen>
 	<dimen name="twotwo_sp">22sp</dimen>
 	<dimen name="twozero_sp">20sp</dimen>
+	<dimen name="text_medium">20sp</dimen>
+	<dimen name="text_small">16sp</dimen>
+	<dimen name="text_home_button">20sp</dimen>
+	<dimen name="titlebar_height">45dp</dimen>
+	<dimen name="footer_height">36dp</dimen>
 </resources>

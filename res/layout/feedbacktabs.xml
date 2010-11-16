@@ -6,7 +6,7 @@
 		android:layout_width="fill_parent" android:layout_height="wrap_content" />
 	<FrameLayout android:id="@android:id/tabcontent"
 		android:layout_width="fill_parent" android:layout_height="fill_parent"
-		android:paddingTop="62px">
+		android:paddingTop="60dp">
 		<include android:id="@+id/personal" layout="@layout/feedback_tab" />
   		<include android:id="@+id/global" layout="@layout/feedback_tab" /> 
 	</FrameLayout>

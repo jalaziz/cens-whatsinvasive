@@ -98,13 +98,16 @@
 <string name="login_retry_button">Retry</string>
 <string name="login_timeout_msg">Login timed out.\n\nMake sure you have network coverage.</string>
 <string name="login_timeout_title">Timeout</string>
-<string name="login_username">Username</string>
+<string name="login_username">User</string>
 <string name="login_username_must_not_empty">The username and password cannot be empty.</string>
-<string name="main_button_mapbug">Map a Pest!</string>
-<string name="main_button_nobugs">No Pests Listed</string>
-<string name="main_button_mapweed">Map a Weed!</string>
+<string name="main_button_mappest">Pests</string>
+<string name="main_button_nopests">No Pests Listed</string>
+<string name="main_button_mapweed">Weeds</string>
 <string name="main_button_noweeds">No Weeds Listed</string>
-<string name="main_button_results">My Results</string>
+<string name="main_button_map">Map</string>
+<string name="main_button_results">Results</string>
+<string name="main_button_news">News</string>
+<string name="main_button_iotw">IotW</string>
 <string name="main_help_para2_1">It will allow you to do two things:</string>
 <string name="main_help_para2_2">See the list of the top invasives.</string>
 <string name="main_help_para2_3">Record an observation of an invasive.</string>
@@ -164,8 +167,8 @@
 <string name="upload_service_done1">What\'s Invasive uploaded observations.</string>
 <string name="upload_service_done2">Upload finished</string>
 <string name="upload_service_done3">What\'s Invasive finished uploading obvservations.</string>
-<string name="version">2.0</string>
-<string name="version_date">1265090400</string>
+<string name="version">2.1</string>
+<string name="version_date">1289049280</string>
 <string name="version_url">http://sm.whatsinvasive.com/phone/getversion.php</string>
 
 <string name="login_anon">Preview Mode</string>
@@ -185,7 +188,7 @@
 <string name="title_welcomer">What\'s Invasive! - About</string>
 <string name="title_whatsinvasive">What\'s Invasive!</string>
 <string name="whatsinvasive_no_details_update">No details specified.</string>
-<string name="whatsinvasive_notlogged">User not logged in.</string>
+<string name="whatsinvasive_notlogged">Not logged in</string>
 <string name="title_feedback">What\'s Invasive! - Results</string>
 <string name="park_location_updated">Park updated</string>
 <string name="title_note">Obversation Note</string>
@@ -214,19 +217,19 @@
 <string name="preferences_summary_upload_service_on">Enable or disable the upload service</string>
 <string name="preferences_category_location">Location</string>
 <string name="preferences_title_location_service_on">Enable Auto-Location</string>
-<string name="preferences_summary_location_service_on">Enable or disable the auto-location service.</string>
+<string name="preferences_summary_location_service_on">Enable or disable the auto-location service</string>
 <string name="preferences_title_select_location">Select Location</string>
-<string name="preferences_summary_select_location">Change your selected park.</string>
+<string name="preferences_summary_select_location">Change your selected park</string>
 <string name="preferences_title_refresh_lists">Refresh Lists</string>
 <string name="preferences_summary_refresh_lists">Update to the latest invasives lists</string>
 <string name="preferences_category_login">Login</string>
 <string name="preferences_title_reset_login">Reset Login</string>
-<string name="preferences_summary_reset_login">Change your login credentials.</string>
+<string name="preferences_summary_reset_login">Change your login credentials</string>
 <string name="preferences_category_debug">Debugging</string>
 <string name="preferences_title_debug_mode">Debug Mode</string>
-<string name="preferences_summary_debug_mode">Enable the collection of debugging information.</string>
+<string name="preferences_summary_debug_mode">Enable the collection of debugging information</string>
 <string name="preferences_title_send_debug">Send Debug Info</string>
-<string name="preferences_summary_send_debug">Send collection debugging information to the developers.</string>
+<string name="preferences_summary_send_debug">Send collection debugging information to the developers</string>
 
 <string name="chooser_send_debug">Send debugging info...</string>
 <string name="send_debug_not_collected">No debugging info collected.</string>
