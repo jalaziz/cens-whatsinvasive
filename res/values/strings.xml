@@ -22,7 +22,7 @@
 <string name="camera_take_photo">Take photo by pressing camera button or center directional pad.</string>
 <string name="cancel">Cancel</string>
 <string name="confirm">Confirm</string>
-<string name="credits">Jameel Al-Aziz\nChristy Brigham\nPatrick Crutcher\nDeborah Estrin\nEric Graham\nKyung Han\nCameron Ketcham\nOlmo Maldonado\nJeff Mascia\nKeith Mayoral\nNicolai Munk Petersen\nSasank Reddy\nEric Yuen</string>
+<string name="credits">Jameel Al-Aziz\nChristy Brigham\nPatrick Crutcher\nDeborah Estrin\nEric Graham\nKyung Han\nJinha Kang\nCameron Ketcham\nOlmo Maldonado\nJeff Mascia\nKeith Mayoral\nNicolai Munk Petersen\nSasank Reddy\nEric Yuen</string>
 <string name="done">Done</string>
 <string name="dontremind">Don\'t Remind</string>
 <string name="empty_queue_text">\nTo edit or delete your previous observations, please visit us at our webpage:</string>
