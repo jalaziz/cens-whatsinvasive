@@ -1,16 +1,13 @@
 package edu.ucla.cens.whatsinvasive.services;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
@@ -18,8 +15,10 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIUtils;
 import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -44,7 +43,7 @@ public class UploadService extends Service {
 	private final String TAG = "UploadService";
 
 	private final String LOCATION_UPLOAD_URL = "phone/upload_location.php";
-	private final String IMAGE_UPLOAD_URL = "phone/upload_image_auth.php";
+	private final String IMAGE_UPLOAD_URL = "phone/upload_image.php";
 	
 	private PostThread thread;
 	
@@ -199,66 +198,43 @@ public class UploadService extends Service {
 			Log.d(TAG, "Trying to post: \"" + uri.toString() + "\" with file " + filename);
 
 			HttpClient httpClient = new CustomHttpClient();
-			HttpPost request = new HttpPost(uri);
+			HttpPost post = new HttpPost(uri);
+			MultipartEntity entity = new MultipartEntity();
 			
 			if(filename != null){
-				FileInputStream fis = new FileInputStream(filename);
-				
-				InputStreamEntity entity = new InputStreamEntity(fis, -1);
-				entity.setChunked(true);
-				entity.setContentType("image/jpeg");
-				
-				request.setEntity(entity);
-	
-				Log.d(TAG, "After setting entity");
+			    Log.d(TAG, "Adding file to entity");
+				entity.addPart("file", new FileBody(new File(filename), "image/jpeg"));
 			}
-
-			HttpResponse response = httpClient.execute(request);
-
-			Log.d(TAG, "Doing HTTP Reqest");
+			
+			post.setEntity(entity);
+			
+			Log.d(TAG, "Executing post: " + post.getRequestLine());
+			HttpResponse response = httpClient.execute(post);
 
 			int status = response.getStatusLine().getStatusCode();
-			//Log.d(TAG, generateString(response.getEntity().getContent()));
 			Log.d(TAG, "Status Message: " + status);
 			
-			if (status == HttpStatus.SC_OK) {
-			    BufferedReader br = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-                String line = br.readLine();
-        
-                while(line != null) {
-                    if(line.equals("UPLOADED_OK")) {
+			HttpEntity responseEntity = response.getEntity();
+			
+			if(responseEntity != null) {
+			    String content = EntityUtils.toString(responseEntity);
+			    responseEntity.consumeContent();
+			    
+    			if (status == HttpStatus.SC_OK) {
+                    if(content.contains("UPLOADED_OK")) {
                         Log.d(TAG, "Sent file.");
                         return true;
                     }
-                    line = br.readLine();
-                }
-                
-				Log.d(TAG, "Upload Failed. Response was not from a WI server.");
-				return false;
+                    
+    				Log.d(TAG, "Upload Failed. Response was not from a WI server.");
+    			} else {
+    				Log.d(TAG, "File not sent. Response: "+ content);
+    			}
 			} else {
-				InputStream is = response.getEntity().getContent();
-				
-				BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-				StringBuilder sb = new StringBuilder();
-
-				String line = null;
-				try {
-					while ((line = reader.readLine()) != null) {
-						sb.append(line + "\n");
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				} finally {
-					try {
-						is.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-				
-				Log.d(TAG, "File not sent. Response: "+ sb.toString());
-				return false;
+			    Log.d(TAG, "File not sent. No response.");
 			}
+			
+			return false;
 		}
 	}
 }
