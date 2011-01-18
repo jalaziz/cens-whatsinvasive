@@ -731,7 +731,7 @@ public class WorkspaceView extends ViewGroup {
         mAllowLongPress = allowLongPress;
     }
 
-    void moveToDefaultScreen(boolean animate) {
+    public void moveToDefaultScreen(boolean animate) {
         if (animate) {
             snapToScreen(mDefaultScreen);
         } else {
@@ -740,7 +740,7 @@ public class WorkspaceView extends ViewGroup {
         getChildAt(mDefaultScreen).requestFocus();
     }
 
-    void setIndicators(Drawable previous, Drawable next) {
+    public void setIndicators(Drawable previous, Drawable next) {
         mPreviousIndicator = previous;
         mNextIndicator = next;
         previous.setLevel(mCurrentScreen);
