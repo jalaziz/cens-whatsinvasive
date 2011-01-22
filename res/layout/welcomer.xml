@@ -48,6 +48,16 @@
 				android:textSize="@dimen/twozero_sp" android:gravity="center_horizontal"
 				android:paddingLeft="10dp" android:paddingRight="10dp"
 				android:paddingTop="10dp" android:text="@string/aboutus2_5"></TextView>
+			<TextView android:id="@+id/aboutus2_6" android:layout_width="wrap_content"
+        android:layout_height="wrap_content" android:textSize="@dimen/twozero_sp"
+        android:paddingLeft="10dp" android:paddingRight="10dp"
+        android:paddingTop="10dp" android:text="@string/aboutus2_6"
+        android:gravity="left" android:textColor="@color/white"></TextView>
+      <TextView android:id="@+id/aboutus2_7" android:autoLink="email"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:textSize="@dimen/twozero_sp" android:gravity="center_horizontal"
+        android:paddingLeft="10dp" android:paddingRight="10dp"
+        android:paddingTop="10dp" android:text="@string/aboutus2_7"></TextView>
 			<TextView android:id="@+id/aboutus3" android:layout_width="wrap_content"
 				android:layout_height="wrap_content" android:textSize="@dimen/twozero_sp"
 				android:paddingLeft="10dp" android:paddingRight="10dp"

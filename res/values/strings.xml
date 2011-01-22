@@ -4,6 +4,8 @@
 <string name="aboutus1">Help us identify and locate invasive plant and animal species in your area using your Android phone.\n\nConservation efforts lack up-to-date information on the locations of weeds and pests and you can help by \&quot;tagging\&quot; locations of invasives using this application.\n\nThe National Park Service and local conservation members will use these location data to focus their removal efforts.</string>
 <string name="aboutus2">Please visit our website for more information:</string>
 <string name="aboutus2_5">http://whatsinvasive.com</string>
+<string name="aboutus2_6">To report problems or to provide suggestions for improvement, please e-mails us at:</string>
+<string name="aboutus2_7">egraham@cens.ucla.edu</string>
 <string name="aboutus3">We are the Center for Embedded Networked Sensing (CENS) at the University of California, Los Angeles.\n</string>
 <string name="aboutus4">Project participants:\n</string>
 <string name="aboutusheader">About What\'s Invasive!</string>
