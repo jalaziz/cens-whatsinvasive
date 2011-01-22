@@ -128,7 +128,7 @@ public class UploadService extends Service {
 							
 							if(deviceId == null) deviceId = "356996016219759";
 							
-							URI uri = createUri(url, deviceId, photoentry.tagsValue, photoentry.noteValue, photoentry.timeValue, photoentry.latValue, photoentry.lonValue, photoentry.areaValue, photoentry.amountValue, photoentry.typeValue, username, password);
+							URI uri = createUri(url, deviceId, photoentry.tagsValue, photoentry.noteValue, photoentry.timeValue, photoentry.latValue, photoentry.lonValue, photoentry.accuracyValue, photoentry.areaValue, photoentry.amountValue, photoentry.typeValue, username, password);
 							
 							Log.d(TAG,"amount = "+ photoentry.amountValue);
 							
@@ -166,14 +166,15 @@ public class UploadService extends Service {
 			runThread = false;
 		}
 		
-		private URI createUri(String url, String deviceid, String tags, String notes, String phototime, String photolat, String photolon, Long area, String photoamount, Integer type, String username, String password){
+		private URI createUri(String url, String deviceid, String tags, String notes, String phototime, double photolat, double photolon, float photoaccuracy, Long area, String photoamount, Integer type, String username, String password){
 			List<NameValuePair> qparams = new ArrayList<NameValuePair>();
 			qparams.add(new BasicNameValuePair("deviceid", deviceid));
 			qparams.add(new BasicNameValuePair("tag", tags));
 			qparams.add(new BasicNameValuePair("notes", notes));
 			qparams.add(new BasicNameValuePair("datetime", phototime +" UTC")); //TODO: Remove UTC for ISO 8601
-			qparams.add(new BasicNameValuePair("latitude", photolat));
-			qparams.add(new BasicNameValuePair("longitude", photolon));
+			qparams.add(new BasicNameValuePair("latitude", Double.toString(photolat)));
+			qparams.add(new BasicNameValuePair("longitude", Double.toString(photolon)));
+			qparams.add(new BasicNameValuePair("accuracy", Float.toString(photoaccuracy)));
 			qparams.add(new BasicNameValuePair("area_id", Long.toString(area)));
 			qparams.add(new BasicNameValuePair("amount", photoamount));
 			qparams.add(new BasicNameValuePair("flag", Integer.toString(type)));

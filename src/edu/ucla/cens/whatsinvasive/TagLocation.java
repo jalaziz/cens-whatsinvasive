@@ -429,8 +429,9 @@ public class TagLocation extends ListActivity implements LocationListener {
 
         PhotoDatabase pdb = new PhotoDatabase(this);
 
-        String longitude = null;
-        String latitude = null;
+        double longitude = 0.0;
+        double latitude = 0.0;
+        float accuracy = 0.0F;
 
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 
@@ -465,10 +466,9 @@ public class TagLocation extends ListActivity implements LocationListener {
         if (loc != null) {
             text += (curtime - (loc.getTime() / 1000)) + " seconds since last lock.\n";
             
-            longitude = Double.toString(loc.getLongitude());
-            latitude = Double.toString(loc.getLatitude());
-        } else {
-            longitude = latitude = "0";
+            longitude = loc.getLongitude();
+            latitude = loc.getLatitude();
+            accuracy = loc.getAccuracy();
         }
         
         Log.d("GPS INFO", text + "lat: " + latitude + "\nlng:" + longitude);
@@ -490,7 +490,7 @@ public class TagLocation extends ListActivity implements LocationListener {
             // taken)
             pdb.open();
             Log.d(TAG, "Adding observation to the database");
-            long photo_created = pdb.createPhoto(longitude, latitude, time,
+            long photo_created = pdb.createPhoto(longitude, latitude, time, accuracy,
                     filename, tag, LocationService.getParkId(this), amount, note, mTagType.value());
             pdb.close();
 

@@ -32,20 +32,21 @@ public class ViewTag extends Activity {
 	}
 
 	private void populate(){
-		TextView tag = (TextView) this.findViewById(R.id.TextView01);
-		TextView tagged = (TextView) this.findViewById(R.id.TextView02);
-		TextView uploaded = (TextView) this.findViewById(R.id.TextView03);
-		TextView location = (TextView) this.findViewById(R.id.TextView04);
-		TextView notes = (TextView)this.findViewById(R.id.TextView05);
+		TextView tag = (TextView) this.findViewById(R.id.tag_name);
+		TextView tagged = (TextView) this.findViewById(R.id.tag_time);
+		TextView uploaded = (TextView) this.findViewById(R.id.tag_time);
+		TextView location = (TextView) this.findViewById(R.id.tag_location);
+		TextView notes = (TextView)this.findViewById(R.id.tag_note);
 		
-		ImageView thumbnail = (ImageView) this.findViewById(R.id.ImageView01);
+		ImageView thumbnail = (ImageView) this.findViewById(R.id.tag_image);
 		
 		tag.setText(data.tagsValue);
 		tagged.setText(getString(R.string.tag_tagged_at) + " " + data.timeValue);
 		if(data.uploadValue!=null)
 			uploaded.setText(getString(R.string.tag_uploaded_on) + " " + data.uploadValue);
-		if(data.latValue!=null && !data.latValue.equals(""))
-			location.setText(getString(R.string.tag_location) + " " + roundString(data.latValue) +", "+ roundString(data.lonValue));
+		if(data.latValue != 0)
+			location.setText(String.format("%s %.4f, %.4f ± %.2f m", getString(R.string.tag_location), 
+			        data.latValue, data.lonValue, data.accuracyValue));
 		if(data.noteValue != null)
 		    notes.setText(getString(R.string.tag_note) + " " + data.noteValue);
 		
@@ -55,11 +56,5 @@ public class ViewTag extends Activity {
 		}else{
 			thumbnail.setVisibility(ImageView.GONE);
 		}
-	}
-	
-	private String roundString(String value){
-		double d = Double.parseDouble(value);
-		
-		return String.valueOf(Math.round(d * 10000) / 10000.0);
 	}
 }
