@@ -38,6 +38,7 @@ import android.os.Message;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -677,5 +678,22 @@ public class WhatsInvasive extends Activity implements Observer {
         }
 
         return dialog;
+    }
+    
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == event.KEYCODE_BACK) {
+            boolean flag = false;
+            if(event.getRepeatCount() == 3) {
+                finish();
+                return true;
+            }
+            else if(event.getRepeatCount() == 0 && flag == false){
+                showToast(getString(R.string.exit_back_alert), Toast.LENGTH_SHORT);
+                flag = true;
+            }
+        }
+            
+        return false;
     }
 }

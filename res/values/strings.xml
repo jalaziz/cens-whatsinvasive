@@ -233,4 +233,6 @@
 
 <string name="chooser_send_debug">Send debugging info...</string>
 <string name="send_debug_not_collected">No debugging info collected.</string>
+
+<string name="exit_back_alert">Press and hold the back button to exit.</string>
 </resources>
